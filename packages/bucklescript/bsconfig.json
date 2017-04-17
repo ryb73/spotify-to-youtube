@@ -1,0 +1,4 @@
+{
+    "name" : "spotify-to-youtube",
+    "sources" : { "dir" : "src"}
+}

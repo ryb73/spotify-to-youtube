@@ -1,0 +1,19 @@
+{
+  "name": "spotify-to-youtube-electron",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryb73/spotify-to-youtube.git"
+  },
+  "author": "Ryan Biwer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ryb73/spotify-to-youtube/issues"
+  },
+  "homepage": "https://github.com/ryb73/spotify-to-youtube#readme"
+}

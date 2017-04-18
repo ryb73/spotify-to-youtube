@@ -5,4 +5,5 @@ B /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_module
 FLG -nostdlib -no-alias-deps -color always -w -40+6+7+27+32..39+44+45
 S src
 B lib/bs/src
+B ./_build/*
 ####BSB GENERATED: NO EDIT}

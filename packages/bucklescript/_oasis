@@ -1,8 +1,0 @@
-OASISFormat: 0.4
-Name:        spotify-to-youtube
-Version:     1.0.0
-Synopsis:    Spotify to YouTube playlist converter
-Authors:     Ryan Biwer
-License:     MIT
-BuildTool:   bsb
-BuildDepends: bs-electron

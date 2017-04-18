@@ -35,10 +35,19 @@ module EventEmitter = struct
   end [@bs]
 end
 
+module WebContents = struct
+  class type t = object
+    method openDevTools : unit -> unit
+  end [@bs]
+end
+
 module BrowserWindow = struct
   class type t = object
     method loadURL : string -> unit
+    method getWebContents : unit -> WebContents.t Js.t
   end [@bs]
+
+  external create : int -> int -> t Js.t = "BrowserWindow" [@@bs.module "electron"]
 end
 
 module Certificate = struct type t end
@@ -58,7 +67,6 @@ module LoginRequest = struct type t end
 module Menu = struct type t end
 module NativeImage = struct type t end
 module Task = struct type t end
-module WebContents = struct type t end
 
 module Dock = struct
   module Bounce = struct
@@ -105,6 +113,7 @@ module Electron = struct
       | WillFinishLaunching : (ns, unit) EventEmitter.Event.t
       | WillQuit : (ns, Event.t) EventEmitter.Event.t
       | WindowAllClosed : (ns, unit) EventEmitter.Event.t
+
     module PathName = struct
       type t = ..
       type t +=
@@ -122,6 +131,7 @@ module Electron = struct
         | UserData
         | Videos
     end
+
     class type t = object
       inherit [ns] EventEmitter.t
       method commandLine : CommandLine.t Js.t

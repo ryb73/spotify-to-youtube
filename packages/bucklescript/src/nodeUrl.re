@@ -3,7 +3,7 @@ type urlObject = [%bs.obj:
     .
     pathname: string,
     protocol: string,
-    slashes: bool
+    slashes: Js.boolean
   }
 ];
 

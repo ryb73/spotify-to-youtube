@@ -21,6 +21,8 @@ var EventEmitter = /* module */[
   /* Listener */Listener
 ];
 
+var WebContents = /* module */[];
+
 var BrowserWindow = /* module */[];
 
 var Certificate = /* module */[];
@@ -42,8 +44,6 @@ var Menu = /* module */[];
 var NativeImage = /* module */[];
 
 var Task = /* module */[];
-
-var WebContents = /* module */[];
 
 var Critical = Caml_exceptions.create("Electron.Dock.Bounce.Critical");
 
@@ -167,6 +167,7 @@ var Electron = /* module */[
 ];
 
 exports.EventEmitter             = EventEmitter;
+exports.WebContents              = WebContents;
 exports.BrowserWindow            = BrowserWindow;
 exports.Certificate              = Certificate;
 exports.CommandLine              = CommandLine;
@@ -178,7 +179,6 @@ exports.LoginRequest             = LoginRequest;
 exports.Menu                     = Menu;
 exports.NativeImage              = NativeImage;
 exports.Task                     = Task;
-exports.WebContents              = WebContents;
 exports.Dock                     = Dock;
 exports.Electron                 = Electron;
 /* No side effect */

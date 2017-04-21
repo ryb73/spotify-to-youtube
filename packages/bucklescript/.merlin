@@ -1,9 +1,9 @@
 ####{BSB GENERATED: NO EDIT
-FLG -ppx /usr/local/lib/node_modules/bs-platform/bin/bsppx.exe
+FLG -ppx /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/bin/bsppx.exe
 S /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/lib/ocaml
 B /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/lib/ocaml
 FLG -nostdlib -no-alias-deps -color always -w -40+6+7+27+32..39+44+45
 S src
+B _build/**
 B lib/bs/src
-B ./_build/*
 ####BSB GENERATED: NO EDIT}

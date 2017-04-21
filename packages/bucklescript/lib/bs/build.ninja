@@ -1,13 +1,14 @@
 ninja_required_version = 1.5.1 
 bs_package_flags = -bs-package-name spotify-to-youtube
 src_root_dir = /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript
-bsc = /usr/local/lib/node_modules/bs-platform/bin/bsc.exe
-bsdep = /usr/local/lib/node_modules/bs-platform/bin/bsb_helper.exe
+bsc = /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/bin/bsc.exe
+bsdep = /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/bin/bsb_helper.exe
 ocamllex = ocamllex.opt
 bsc_flags = -nostdlib -I /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/lib/ocaml -no-alias-deps -color always -w -40+6+7+27+32..39+44+45
 ppx_flags = 
 bs_package_includes = 
-refmt = /usr/local/lib/node_modules/bs-platform/bin/refmt.exe
+bs_package_dev_includes = 
+refmt = /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/bin/refmt.exe
 reason_react_jsx = 
 refmt_flags = --print binary
 bsb_dir_group = 0

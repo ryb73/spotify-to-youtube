@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "bsb",
+    "watch": "bsb -w",
+    "clean": "bsb -clean-world",
+    "make-world": "bsb -make-world"
   },
   "repository": {
     "type": "git",
@@ -18,6 +22,7 @@
   "homepage": "https://github.com/ryb73/spotify-to-youtube#readme",
   "devDependencies": {
     "bs-node": "github:buckletypes/bs-node",
-    "bs-platform": "^1.6.0"
-  }
+    "bs-platform": "*"
+  },
+  "myreason": "*"
 }

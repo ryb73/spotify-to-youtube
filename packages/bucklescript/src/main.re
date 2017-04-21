@@ -2,14 +2,25 @@ open Electron;
 open Node;
 open MyNode;
 
-external newBrowserWindow : int => int => Js.t BrowserWindow.t = "BrowserWindow" [@@bs.module "electron"];
-
 let createWindow () => {
-    let win = newBrowserWindow 800 600;
+    let win = BrowserWindow.create 800 600;
 
-    let url = Url.format [%bs.obj
+    let url = Url.formatUrl [%bs.obj
         {
+            pathname: Path.join [| "/var/", "index.html" |],
+            protocol: "file:",
+            slashes: Js.true_
         }
-    ]
-    win##loadURL (Path.join [| "/var/", "index.html" |]);
+    ];
+
+    win##loadURL url;
+
+    (win##getWebContents ())
+        ## openDevTools ();
+
+    win##on BrowserWindow.Closed (fun () => ());
+
+    ();
 };
+
+Electron.app##on Electron.App.Ready createWindow;

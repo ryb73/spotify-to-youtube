@@ -42,7 +42,13 @@ module WebContents = struct
 end
 
 module BrowserWindow = struct
+  type ns = [`BrowserWindow | `EventEmitter]
+    type (_,_) EventEmitter.Event.t +=
+      | Closed : (ns, unit) EventEmitter.Event.t
+
   class type t = object
+    inherit [ns] EventEmitter.t
+
     method loadURL : string -> unit
     method getWebContents : unit -> WebContents.t Js.t
   end [@bs]

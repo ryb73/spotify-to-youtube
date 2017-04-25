@@ -15,7 +15,7 @@ let createWindow () => {
         {
             pathname: Path.join [| dirname, "../../../html/index.html" |],
             protocol: "file:",
-            slashes: Js.true_
+            slashes: true
         }
     ];
 

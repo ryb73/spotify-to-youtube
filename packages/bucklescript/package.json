@@ -8,7 +8,8 @@
     "build": "bsb",
     "watch": "bsb -w",
     "clean": "bsb -clean-world",
-    "make-world": "bsb -make-world"
+    "make-world": "bsb -make-world",
+    "better-errors": "eval $(dependencyEnv) && nopam && which berror.native"
   },
   "repository": {
     "type": "git",
@@ -24,5 +25,8 @@
     "bs-node": "github:buckletypes/bs-node",
     "bs-platform": "*"
   },
-  "myreason": "*"
+  "myreason": "*",
+  "dependencies": {
+    "electron": "^1.6.5"
+  }
 }

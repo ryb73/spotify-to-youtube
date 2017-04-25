@@ -25,7 +25,7 @@ module EventEmitter = struct
     method getMaxListeners : unit -> int
     method listenerCount : ('e, 'v) Event.t -> int
     method listeners : ('e, 'v) Event.t -> 'v Listener.t array
-    method on : ('e, 'v) Event.t -> 'v Listener.t -> 'e t Js.t
+    method on : string -> 'v Listener.t -> 'e t Js.t
     method once : ('e, 'v) Event.t -> 'v Listener.t -> 'e t Js.t
     method prependListener : ('e, 'v) Event.t -> 'v Listener.t -> 'e t Js.t
     method prependOnceListener : ('e, 'v) Event.t -> 'v Listener.t -> 'e t Js.t
@@ -43,17 +43,17 @@ end
 
 module BrowserWindow = struct
   type ns = [`BrowserWindow | `EventEmitter]
-    type (_,_) EventEmitter.Event.t +=
+  type (_,_) EventEmitter.Event.t +=
       | Closed : (ns, unit) EventEmitter.Event.t
 
   class type t = object
     inherit [ns] EventEmitter.t
 
     method loadURL : string -> unit
-    method getWebContents : unit -> WebContents.t Js.t
+    method webContents : WebContents.t Js.t
   end [@bs]
 
-  external create : int -> int -> t Js.t = "BrowserWindow" [@@bs.module "electron"]
+  external create : int -> int -> t Js.t = "BrowserWindow" [@@bs.new] [@@bs.module "electron"]
 end
 
 module Certificate = struct type t end

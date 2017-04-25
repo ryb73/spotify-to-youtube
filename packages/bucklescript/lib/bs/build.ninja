@@ -27,6 +27,13 @@ rule build_cmj_cmi
   description = [34mBuilding[39m [2m${out}[22m
 build src/main.cmj $src_root_dir/lib/js/src/main.js src/main.cmi : build_cmj_cmi src/main.mlast
   bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/src
+rule build_ast_and_deps
+  command = ${bsc}  ${pp_flags} ${ppx_flags} ${bsc_flags} -c -o ${out} -bs-syntax-only -bs-binary-ast ${in}
+  description = [34mBuilding[39m [2m${out}[22m
+build src/test.mlast : build_ast_and_deps $src_root_dir/src/test.ml
+build src/test.mlast.d : build_deps src/test.mlast
+build src/test.cmj $src_root_dir/lib/js/src/test.js src/test.cmi : build_cmj_cmi src/test.mlast
+  bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/src
 build src/myNode.mlast : build_ast_and_deps_from_reason_impl $src_root_dir/src/myNode.re
 build src/myNode.mlast.d : build_deps src/myNode.mlast
 build src/myNode.cmj $src_root_dir/lib/js/src/myNode.js src/myNode.cmi : build_cmj_cmi src/myNode.mlast
@@ -35,11 +42,8 @@ build src/nodeUrl.mlast : build_ast_and_deps_from_reason_impl $src_root_dir/src/
 build src/nodeUrl.mlast.d : build_deps src/nodeUrl.mlast
 build src/nodeUrl.cmj $src_root_dir/lib/js/src/nodeUrl.js src/nodeUrl.cmi : build_cmj_cmi src/nodeUrl.mlast
   bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/src
-rule build_ast_and_deps
-  command = ${bsc}  ${pp_flags} ${ppx_flags} ${bsc_flags} -c -o ${out} -bs-syntax-only -bs-binary-ast ${in}
-  description = [34mBuilding[39m [2m${out}[22m
 build src/electron.mlast : build_ast_and_deps $src_root_dir/src/electron.ml
 build src/electron.mlast.d : build_deps src/electron.mlast
 build src/electron.cmj $src_root_dir/lib/js/src/electron.js src/electron.cmi : build_cmj_cmi src/electron.mlast
   bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/src
-build build.ninja : phony  ||  src/electron.mlast.d src/nodeUrl.mlast.d src/myNode.mlast.d src/main.mlast.d
+build build.ninja : phony  ||  src/electron.mlast.d src/nodeUrl.mlast.d src/myNode.mlast.d src/test.mlast.d src/main.mlast.d

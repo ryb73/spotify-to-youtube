@@ -1,1 +1,1 @@
-src/main.cmj : src/myNode.cmj src/electron.cmj
+src/main.cmj : src/electron.cmj

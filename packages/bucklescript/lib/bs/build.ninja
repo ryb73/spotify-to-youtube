@@ -4,15 +4,15 @@ src_root_dir = /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescrip
 bsc = /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/bin/bsc.exe
 bsdep = /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/bin/bsb_helper.exe
 ocamllex = ocamllex.opt
-bsc_flags = -nostdlib -I /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/lib/ocaml -no-alias-deps -color always -w -40+6+7+27+32..39+44+45
+bsc_flags = -nostdlib -I /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/lib/ocaml -w -10 -no-alias-deps -color always -w -40+6+7+27+32..39+44+45
 ppx_flags = 
-bs_package_includes = 
+bs_package_includes = -I /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/reason-react/lib/ocaml -I /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-webapi/lib/ocaml -I /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-node-http-server/lib/ocaml
 bs_package_dev_includes = 
 refmt = /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/bin/refmt.exe
-reason_react_jsx = 
+reason_react_jsx = -ppx '/Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/bin/reactjs_jsx_ppx.exe'
 refmt_flags = --print binary
 bsb_dir_group = 0
-bsc_lib_includes = -I src
+bsc_lib_includes = -I src/react -I src
 rule build_ast_and_deps_from_reason_impl
   command = ${bsc} -pp "${refmt} ${refmt_flags}" ${reason_react_jsx}  ${ppx_flags} ${bsc_flags} -c -o ${out} -bs-syntax-only -bs-binary-ast -impl ${in}
   description = [34mBuilding[39m [2m${out}[22m
@@ -30,20 +30,20 @@ build src/main.cmj $src_root_dir/lib/js/src/main.js src/main.cmi : build_cmj_cmi
 rule build_ast_and_deps
   command = ${bsc}  ${pp_flags} ${ppx_flags} ${bsc_flags} -c -o ${out} -bs-syntax-only -bs-binary-ast ${in}
   description = [34mBuilding[39m [2m${out}[22m
-build src/test.mlast : build_ast_and_deps $src_root_dir/src/test.ml
-build src/test.mlast.d : build_deps src/test.mlast
-build src/test.cmj $src_root_dir/lib/js/src/test.js src/test.cmi : build_cmj_cmi src/test.mlast
-  bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/src
-build src/myNode.mlast : build_ast_and_deps_from_reason_impl $src_root_dir/src/myNode.re
-build src/myNode.mlast.d : build_deps src/myNode.mlast
-build src/myNode.cmj $src_root_dir/lib/js/src/myNode.js src/myNode.cmi : build_cmj_cmi src/myNode.mlast
-  bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/src
-build src/nodeUrl.mlast : build_ast_and_deps_from_reason_impl $src_root_dir/src/nodeUrl.re
-build src/nodeUrl.mlast.d : build_deps src/nodeUrl.mlast
-build src/nodeUrl.cmj $src_root_dir/lib/js/src/nodeUrl.js src/nodeUrl.cmi : build_cmj_cmi src/nodeUrl.mlast
-  bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/src
 build src/electron.mlast : build_ast_and_deps $src_root_dir/src/electron.ml
 build src/electron.mlast.d : build_deps src/electron.mlast
 build src/electron.cmj $src_root_dir/lib/js/src/electron.js src/electron.cmi : build_cmj_cmi src/electron.mlast
   bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/src
-build build.ninja : phony  ||  src/electron.mlast.d src/nodeUrl.mlast.d src/myNode.mlast.d src/test.mlast.d src/main.mlast.d
+build src/react/url.mlast : build_ast_and_deps_from_reason_impl $src_root_dir/src/react/url.re
+build src/react/url.mlast.d : build_deps src/react/url.mlast
+build src/react/url.cmj $src_root_dir/lib/js/src/react/url.js src/react/url.cmi : build_cmj_cmi src/react/url.mlast
+  bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/src/react
+build src/react/page.mlast : build_ast_and_deps_from_reason_impl $src_root_dir/src/react/page.re
+build src/react/page.mlast.d : build_deps src/react/page.mlast
+build src/react/page.cmj $src_root_dir/lib/js/src/react/page.js src/react/page.cmi : build_cmj_cmi src/react/page.mlast
+  bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/src/react
+build src/react/index.mlast : build_ast_and_deps_from_reason_impl $src_root_dir/src/react/index.re
+build src/react/index.mlast.d : build_deps src/react/index.mlast
+build src/react/index.cmj $src_root_dir/lib/js/src/react/index.js src/react/index.cmi : build_cmj_cmi src/react/index.mlast
+  bs_package_flags = $bs_package_flags  -bs-package-output commonjs:lib/js/src/react
+build build.ninja : phony  ||  src/react/index.mlast.d src/react/page.mlast.d src/react/url.mlast.d src/electron.mlast.d src/main.mlast.d

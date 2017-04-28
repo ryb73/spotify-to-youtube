@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "eval $(dependencyEnv) && nopam && bsb 2>&1 | berror.native --path-to-refmttype $(which refmttype)",
-    "watch": "eval $(dependencyEnv) && nopam && bsb -w 2>&1 | berror.native --path-to-refmttype $(which refmttype)",
+    "watch": "eval $(dependencyEnv) && nopam && bsb -make-world -w 2>&1 | berror.native --path-to-refmttype $(which refmttype)",
     "clean": "bsb -clean-world",
-    "make-world": "bsb -make-world"
+    "webpack": "webpack -w"
   },
   "repository": {
     "type": "git",
@@ -23,12 +23,19 @@
   "devDependencies": {
     "bs-node": "github:buckletypes/bs-node",
     "bs-platform": "*",
-    "nopam": "*",
+    "bs-webapi": "0.4.1",
     "dependency-env": "*",
-    "ocamlBetterErrors": "*"
+    "http-server": "0.9.0",
+    "nopam": "*",
+    "ocamlBetterErrors": "*",
+    "react": "15.5.4",
+    "react-dom": "15.5.4",
+    "reason-react": "0.1.1",
+    "webpack": "2.4.1"
   },
   "myreason": "*",
   "dependencies": {
-    "electron": "^1.6.5"
+    "electron": "1.6.5",
+    "http-server": "0.9.0"
   }
 }

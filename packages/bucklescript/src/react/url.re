@@ -1,3 +1,5 @@
+/* Deduping this later when not lazy */
+
 type urlObject = [%bs.obj:
   {
     .

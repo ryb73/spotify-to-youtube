@@ -1,4 +1,10 @@
 {
     "name" : "spotify-to-youtube",
-    "sources" : { "dir" : "src"}
+    "bs-dependencies": [ "reason-react", "bs-webapi", "bs-node-http-server" ],
+    "reason" : { "react-jsx" : true},
+    "sources" : {
+        "dir" : "src",
+        "subdirs": [ "react" ]
+    },
+    "bsc-flags": [ "-w -10" ]
 }

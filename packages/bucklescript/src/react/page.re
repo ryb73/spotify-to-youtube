@@ -1,4 +1,6 @@
-external encodeUriComponent : string => string = "encodeURIComponent" [@@bs.val];
+open ReasonJs;
+open Dom.Window;
+open Dom.Location;
 
 module Page = {
     include ReactRe.Component;
@@ -6,23 +8,19 @@ module Page = {
     type props = unit;
     let name = "Page";
 
-    let spotifyUrl = {
-        let clientId = "35988437b3404ab08d67eaced43c4997";
-        let callbackUrl = encodeUriComponent "http://localhost:54380/";
-        let requiredPermissions = encodeUriComponent @@ String.concat " " [ "playlist-read-private", "playlist-read-collaborative" ];
-
-        "https://accounts.spotify.com/authorize/?client_id=" ^ clientId ^
-            "&response_type=code&redirect_uri=" ^ callbackUrl ^
-            "&scope=" ^ requiredPermissions ^ "&state=34fFs29kd09";
+    let searchStr = Dom.window |> location |> search;
+    let queryString = switch(String.length searchStr) {
+        | 0 => ""
+        | _ => String.sub searchStr 1 (String.length searchStr - 1)
     };
+    Js.log ("!! " ^ queryString);
 
-    let render _ =>
-        <div>
-            <h1>(ReactRe.stringToElement "Step 1: Log into Spotify")</h1>
-            <p>
-                <a href=spotifyUrl>(ReactRe.stringToElement "Log In")</a>
-            </p>
-        </div>;
+    let parsedQueryString = ValidateSpotifyResponse.parseQueryString queryString;
+
+    let render _ => switch (Js.Undefined.to_opt parsedQueryString##code) {
+        | None => <PromptConnectSpotify />;
+        | Some code => <ValidateSpotifyResponse code parsedQueryString />;
+    };
 };
 
 include ReactRe.CreateComponent Page;

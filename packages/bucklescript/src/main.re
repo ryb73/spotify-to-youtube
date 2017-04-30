@@ -24,5 +24,8 @@ Electron.app##on "activate" (fun () => {
     };
 });
 
-let server = HttpServer.createServer [%bs.obj { root: "html/" }];
+let server = HttpServer.createServer [%bs.obj {
+    root: "html/",
+    cache: Js.Undefined.return ~-1 /* No caching */
+}];
 server##listen 54380;

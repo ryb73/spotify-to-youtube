@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "eval $(dependencyEnv) && nopam && bsb 2>&1 | berror.native --path-to-refmttype $(which refmttype)",
     "watch": "eval $(dependencyEnv) && nopam && bsb -make-world -w 2>&1 | berror.native --path-to-refmttype $(which refmttype)",
-    "clean": "bsb -clean-world",
+    "clean": "bsb -clean-world && rm -rf html/js",
     "webpack": "webpack -w"
   },
   "repository": {
@@ -31,6 +31,7 @@
     "react": "15.5.4",
     "react-dom": "15.5.4",
     "reason-react": "0.1.1",
+    "spotify-web-api-node": "2.3.6",
     "webpack": "2.4.1"
   },
   "myreason": "*",

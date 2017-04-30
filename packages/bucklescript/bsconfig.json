@@ -1,6 +1,12 @@
 {
     "name" : "spotify-to-youtube",
-    "bs-dependencies": [ "reason-react", "bs-webapi", "bs-node-http-server" ],
+    "bs-dependencies": [
+        "reason-react",
+        "bs-webapi",
+        "bs-node-http-server",
+        "bs-spotify-web-api",
+        "bs-qs"
+    ],
     "reason" : { "react-jsx" : true},
     "sources" : {
         "dir" : "src",

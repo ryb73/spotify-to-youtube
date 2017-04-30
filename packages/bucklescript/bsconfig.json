@@ -10,7 +10,7 @@
     "reason" : { "react-jsx" : true},
     "sources" : {
         "dir" : "src",
-        "subdirs": [ "react" ]
+        "subdirs": [ "react", "react/steps" ]
     },
     "bsc-flags": [ "-w -10-23" ]
 }

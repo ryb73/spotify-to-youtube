@@ -32,7 +32,7 @@ module Page = {
         switch (parsedHashString##state) {
             | "state" => {
                 spotify##setAccessToken access_token;
-                <PromptConnectYoutube />;
+                <PlaylistList spotify />;
             };
 
             | _ =>
@@ -40,11 +40,9 @@ module Page = {
         };
     };
 
-    Js.log (Dom.window |> location |> href);
-
     let render _ => {
         switch (Js.Undefined.to_opt parsedHashString##access_token) {
-            | None => <PromptConnectSpotify spotify />;
+            | None => <PromptConnectSpotify />;
             | Some access_token => validateSpotifyResponse access_token;
         };
     };

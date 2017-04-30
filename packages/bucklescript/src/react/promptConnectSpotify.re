@@ -1,9 +1,9 @@
 module PromptConnectSpotify = {
     include ReactRe.Component;
     let name = "PromptConnectSpotify";
-    type props = { spotify: Js.t Spotify.t };
+    type props = unit;
 
-    let render { props } => {
+    let render _ => {
         let spotifyUrl = {
             let requiredPermissions = [ "playlist-read-private", "playlist-read-collaborative" ];
             SpotifyHelper.authUrl requiredPermissions "state";
@@ -20,4 +20,4 @@ module PromptConnectSpotify = {
 
 include ReactRe.CreateComponent PromptConnectSpotify;
 
-let createElement ::spotify => wrapProps { spotify: spotify };
+let createElement = wrapProps ();

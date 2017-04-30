@@ -5,8 +5,8 @@ module PromptConnectSpotify = {
 
     let render { props } => {
         let spotifyUrl = {
-            let requiredPermissions = [| "playlist-read-private", "playlist-read-collaborative" |];
-            props.spotify##createAuthorizeURL requiredPermissions "state";
+            let requiredPermissions = [ "playlist-read-private", "playlist-read-collaborative" ];
+            SpotifyHelper.authUrl requiredPermissions "state";
         };
 
         <div>

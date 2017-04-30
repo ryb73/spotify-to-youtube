@@ -10,7 +10,7 @@ module ValidateSpotifyCode = {
         };
     };
 
-    module MyQs = MakeQs(QueryString);
+    module MyQs = MakeParser(QueryString);
 
     type props = {
         code: string,

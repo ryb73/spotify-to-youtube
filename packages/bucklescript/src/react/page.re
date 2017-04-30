@@ -3,43 +3,36 @@ open Dom.Window;
 open Dom.Location;
 
 module Page = {
-    include ReactRe.Component.Stateful;
+    include ReactRe.Component;
     let name = "Page";
     type props = unit;
 
-    type spotifyAuthStatus = [ `Unauthed | `Authed | `Error ];
-
-    type state = { spotifyAuthed: spotifyAuthStatus };
-
-    let getInitialState _ => { spotifyAuthed: `Unauthed };
-
-    let parsedQueryString = {
-        let searchStr = Dom.window |> location |> search;
-        let queryString = switch(String.length searchStr) {
+    let parsedHashString = {
+        let hashStr = Dom.window |> location |> hash;
+        let queryString = switch(String.length hashStr) {
             | 0 => ""
-            | _ => String.sub searchStr 1 (String.length searchStr - 1)
+            | _ => String.sub hashStr 1 (String.length hashStr - 1)
         };
 
-        ValidateSpotifyResponse.parseQueryString queryString;
+        module Parser = Qs.MakeParser({
+            class type t = {
+                pub access_token : Js.undefined string;
+                pub token_type : string;
+                pub expires_in : int;
+                pub state : string;
+            };
+        });
+
+        Parser.parse queryString;
     };
 
     let spotify = SpotifyHelper.create ();
 
-    let setSpotifyTokens { setState } data => {
-        spotify##setAccessToken data##access_token;
-
-        setState (fun { state } => { ...state, spotifyAuthed: `Authed });
-
-        Js.Promise.resolve ();
-    };
-
-    let validateSpotifyResponse bag code => {
-        switch (parsedQueryString##state) {
+    let validateSpotifyResponse access_token => {
+        switch (parsedHashString##state) {
             | "state" => {
-                spotify##authorizationCodeGrant code
-                    |> Js.Promise.then_ (setSpotifyTokens bag);
-
-                <LoadingScreen message="Connecting to Spotify" />;
+                spotify##setAccessToken access_token;
+                <PromptConnectYoutube />;
             };
 
             | _ =>
@@ -47,19 +40,12 @@ module Page = {
         };
     };
 
-    let render bag => {
-        let { state } = bag;
+    Js.log (Dom.window |> location |> href);
 
-        switch (state.spotifyAuthed) {
-            | `Authed => <PromptConnectYoutube />;
-
-            | `Unauthed =>
-                switch (Js.Undefined.to_opt parsedQueryString##code) {
-                    | None => <PromptConnectSpotify spotify=spotify />;
-                    | Some code => validateSpotifyResponse bag code;
-                };
-
-            | `Error => <span>(ReactRe.stringToElement "An error has occurred.")</span>;
+    let render _ => {
+        switch (Js.Undefined.to_opt parsedHashString##access_token) {
+            | None => <PromptConnectSpotify spotify />;
+            | Some access_token => validateSpotifyResponse access_token;
         };
     };
 };

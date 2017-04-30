@@ -3,7 +3,7 @@ FLG -ppx /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node
 FLG -ppx /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/bin/bsppx.exe
 S /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/lib/ocaml
 B /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-platform/lib/ocaml
-FLG -nostdlib -w -10 -no-alias-deps -color always -w -40+6+7+27+32..39+44+45
+FLG -nostdlib -w -10-23 -no-alias-deps -color always -w -40+6+7+27+32..39+44+45
 S /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/reason-react/lib/ocaml
 B /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/reason-react/lib/ocaml
 S /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-webapi/lib/ocaml

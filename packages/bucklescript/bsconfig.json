@@ -12,5 +12,5 @@
         "dir" : "src",
         "subdirs": [ "react" ]
     },
-    "bsc-flags": [ "-w -10" ]
+    "bsc-flags": [ "-w -10-23" ]
 }

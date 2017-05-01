@@ -3,7 +3,8 @@ module Step = {
     let name = "Step";
     type props = {
         label: string,
-        state: [ `Incomplete | `Complete | `InProgress ]
+        state: [ `Incomplete | `Complete | `InProgress ],
+        children: Js.null_undefined ReactRe.reactJsChildren
     };
 
     type renderData = { headerStyle: ReactDOMRe.style, icon: ReactRe.reactElement };
@@ -37,10 +38,11 @@ module Step = {
         <div>
             <h1 style=headerStyle>(ReactRe.stringToElement props.label)</h1>
             (icon)
+            <p>(ReactRe.listToElement @@ ReactRe.jsChildrenToReason props.children)</p>
         </div>
     };
 };
 
 include ReactRe.CreateComponent Step;
 
-let createElement ::state ::label  => wrapProps { state, label };
+let createElement ::state ::label ::children  => wrapProps { state, label, children };

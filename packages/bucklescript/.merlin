@@ -14,10 +14,10 @@ S /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_module
 B /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-spotify-web-api/lib/ocaml
 S /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-qs/lib/ocaml
 B /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-qs/lib/ocaml
+S /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-google-apis-web/lib/ocaml
+B /Users/ryan/Personal/proj/spotify-to-youtube/packages/bucklescript/node_modules/bs-google-apis-web/lib/ocaml
 S src
 B lib/bs/src
-S src/react/steps
-B lib/bs/src/react/steps
 S src/react
 B lib/bs/src/react
 ####BSB GENERATED: NO EDIT}

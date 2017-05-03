@@ -6,13 +6,13 @@ module PlaylistList = {
     type props = { spotify: Js.t Spotify.t };
 
     type state = {
-        userId: option string,
-        playlists: option (array (Js.t Spotify.playlist))
+        playlists: option (array (Js.t Spotify.playlist)),
+        errorMessage: option string
     };
 
     let getInitialState _ => {
-        userId: None,
-        playlists: None
+        playlists: None,
+        errorMessage: None
     };
 
     let setPlaylists { setState } data => {
@@ -23,24 +23,22 @@ module PlaylistList = {
         resolve ();
     };
 
-    let setUserId bag data => {
-        let { setState, props } = bag;
-
+    let setError { setState } errorMessage => {
         setState (fun { state } =>
-            { ...state, userId: Some data##body##id }
+            { ...state, errorMessage: Some errorMessage }
         );
-
-        props.spotify##getUserPlaylists data##body##id
-            |> then_ (setPlaylists bag);
-
-        resolve ();
     };
 
     let componentDidMount bag => {
         let { props } = bag;
 
-        props.spotify##getMe ()
-            |> then_ (setUserId bag);
+        SpotifyHelper.getMyPlaylists props.spotify
+            |> then_ (setPlaylists bag)
+            |> catch (fun err => {
+                resolve err; /* prevent from being cleaned up */
+                setError bag [%bs.raw "err.message" ];
+                resolve ();
+            });
 
         None;
     };
@@ -57,9 +55,13 @@ module PlaylistList = {
     };
 
     let render { state } => {
-        switch (state.playlists) {
-            | None => <LoadingScreen message="Connecting to Spotify" />;
-            | Some playlists => renderPlaylists playlists;
+        switch state.errorMessage {
+            | Some msg => <span>(ReactRe.stringToElement ("Error: " ^ msg))</span>;
+            | None =>
+                switch state.playlists {
+                    | None => <LoadingScreen message="Connecting to Spotify" />;
+                    | Some playlists => renderPlaylists playlists;
+                };
         };
     };
 };

@@ -15,9 +15,9 @@ module PlaylistList = {
         errorMessage: None
     };
 
-    let setPlaylists { setState } data => {
+    let setPlaylists { setState } items => {
         setState (fun { state } =>
-            { ...state, playlists: Some data##body##items }
+            { ...state, playlists: Some items }
         );
 
         resolve ();
@@ -49,12 +49,15 @@ module PlaylistList = {
                 <li key=playlist##id>(ReactRe.stringToElement playlist##name)</li>
             });
 
-        <ul>
-            (ReactRe.arrayToElement listItems)
-        </ul>
+        <div>
+            <p>(ReactRe.stringToElement "Select a playlist below:")</p>
+            <ul>
+                (ReactRe.arrayToElement listItems)
+            </ul>
+        </div>
     };
 
-    let render { state } => {
+    let renderBody { state } => {
         switch state.errorMessage {
             | Some msg => <span>(ReactRe.stringToElement ("Error: " ^ msg))</span>;
             | None =>
@@ -63,6 +66,13 @@ module PlaylistList = {
                     | Some playlists => renderPlaylists playlists;
                 };
         };
+    };
+
+    let render bag => {
+        <div>
+            <h1>(ReactRe.stringToElement "Step 2: Select a playlist to convert")</h1>
+            (renderBody bag)
+        </div>
     };
 };
 

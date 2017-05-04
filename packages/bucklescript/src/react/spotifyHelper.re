@@ -26,7 +26,7 @@ let loadMyUserId spotify => {
     spotify##getMe ()
         |> then_ (fun data => {
             myUserId := Some data##body##id;
-            resolve "";/*data##body##id;*/
+            resolve data##body##id;
         });
 };
 
@@ -36,7 +36,27 @@ let getMyUserId spotify =>
         | Some userId => resolve userId
     };
 
+let rec getUserPlaylistsPage spotify offset currentItems userId => {
+    let limit = Spotify.maxPageSizePlaylists;
+
+    let apiOptions = [%bs.obj {
+        limit: Js.Undefined.return limit,
+        offset: Js.Undefined.return offset
+    }];
+
+    spotify##getUserPlaylists userId apiOptions
+        |> then_ (fun data => {
+            let combinedItems = Js.Array.concat data##body##items currentItems;
+            let remainingItems = data##body##total - limit - offset;
+            if(remainingItems > 0) {
+                getUserPlaylistsPage spotify (offset + limit) combinedItems userId;
+            } else {
+                resolve combinedItems;
+            }
+        });
+};
+
 let getMyPlaylists spotify => {
     getMyUserId spotify
-        |> then_ (fun userId => spotify##getUserPlaylists userId);
+        |> then_ (getUserPlaylistsPage spotify 0 [||]);
 };

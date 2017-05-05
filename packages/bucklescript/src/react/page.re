@@ -3,9 +3,12 @@ open Dom.Window;
 open Dom.Location;
 
 module Page = {
-    include ReactRe.Component;
+    include ReactRe.Component.Stateful;
     let name = "Page";
     type props = unit;
+    type state = { selectedPlaylistId : option string };
+
+    let getInitialState _ => { selectedPlaylistId: None };
 
     let parsedHashString = {
         let hashStr = Dom.window |> location |> hash;
@@ -28,11 +31,15 @@ module Page = {
 
     let spotify = SpotifyHelper.create ();
 
-    let validateSpotifyResponse access_token => {
+    let playlistSelected _ playlistId => {
+        Some { selectedPlaylistId: Some playlistId };
+    };
+
+    let validateSpotifyResponse { updater } access_token => {
         switch (parsedHashString##state) {
             | "state" => {
                 spotify##setAccessToken access_token;
-                <PlaylistList spotify />;
+                <PlaylistList spotify playlistSelected=(updater playlistSelected) />;
             };
 
             | _ =>
@@ -40,10 +47,17 @@ module Page = {
         };
     };
 
-    let render _ => {
-        switch (Js.Undefined.to_opt parsedHashString##access_token) {
-            | None => <PromptConnectSpotify />;
-            | Some access_token => validateSpotifyResponse access_token;
+    let onSignedIntoYouTube _ _ => None;
+
+    let render bag => {
+        let { state, updater } = bag;
+
+        switch state.selectedPlaylistId {
+            | Some _ => <PromptConnectYouTube onSignedIn=(updater onSignedIntoYouTube) />;
+            | None => switch (Js.Undefined.to_opt parsedHashString##access_token) {
+                | None => <PromptConnectSpotify />;
+                | Some access_token => validateSpotifyResponse bag access_token;
+            };
         };
     };
 };

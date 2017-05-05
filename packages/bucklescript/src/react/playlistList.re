@@ -3,7 +3,10 @@ open Js.Promise;
 module PlaylistList = {
     include ReactRe.Component.Stateful;
     let name = "PlaylistList";
-    type props = { spotify: Js.t Spotify.t };
+    type props = {
+        spotify: Js.t Spotify.t,
+        playlistSelected: string => unit
+    };
 
     type state = {
         playlists: option (array (Js.t Spotify.playlist)),
@@ -43,11 +46,23 @@ module PlaylistList = {
         None;
     };
 
-    let renderPlaylists playlists => {
+    let playlistSelected playlistId { props } e => {
+        ReactEventRe.Mouse.preventDefault e;
+
+        props.playlistSelected playlistId;
+
+        None;
+    };
+
+    let renderPlaylist { updater } playlist => {
+        <li key=playlist##id>
+            <a href="#" onClick=(updater (playlistSelected playlist##id))>(ReactRe.stringToElement playlist##name)</a>
+        </li>
+    };
+
+    let renderPlaylists bag playlists => {
         let listItems = playlists
-            |> Js.Array.map (fun playlist => {
-                <li key=playlist##id>(ReactRe.stringToElement playlist##name)</li>
-            });
+            |> Js.Array.map (renderPlaylist bag);
 
         <div>
             <p>(ReactRe.stringToElement "Select a playlist below:")</p>
@@ -57,13 +72,15 @@ module PlaylistList = {
         </div>
     };
 
-    let renderBody { state } => {
+    let renderBody bag => {
+        let { state } = bag;
+
         switch state.errorMessage {
             | Some msg => <span>(ReactRe.stringToElement ("Error: " ^ msg))</span>;
             | None =>
                 switch state.playlists {
                     | None => <LoadingScreen message="Connecting to Spotify" />;
-                    | Some playlists => renderPlaylists playlists;
+                    | Some playlists => renderPlaylists bag playlists;
                 };
         };
     };
@@ -78,4 +95,4 @@ module PlaylistList = {
 
 include ReactRe.CreateComponent PlaylistList;
 
-let createElement ::spotify => wrapProps { spotify: spotify };
+let createElement ::spotify ::playlistSelected => wrapProps { spotify, playlistSelected };

@@ -27,7 +27,7 @@ module PromptConnectYouTube = {
                     props.onSignedIn ();
                 } else {
                     YoutubeHelper.listenSignInChange @@ signInStatusChanged bag;
-                };
+                }
 
                 resolve ();
             });

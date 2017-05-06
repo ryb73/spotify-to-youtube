@@ -1,5 +1,6 @@
 const path               = require("path"),
-      CopyWebpackPlugin  = require("copy-webpack-plugin");
+      CopyWebpackPlugin  = require("copy-webpack-plugin"),
+      webpack            = require("webpack");
 
 module.exports = {
     target: "electron-renderer",
@@ -13,15 +14,9 @@ module.exports = {
         filename: "js/[name].js",
     },
 
-    module: {
-        rules: [{
-            test: /\.js$/,
-            enforce: "pre",
-            loader: "webpack-strip-block"
-        }]
-    },
-
     plugins: [
+        new webpack.DefinePlugin({ "global.GENTLY": false }),
+
         new CopyWebpackPlugin([{
             from: "node_modules/font-awesome/css",
             to: "css"

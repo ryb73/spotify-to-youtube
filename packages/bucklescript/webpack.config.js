@@ -2,6 +2,8 @@ const path               = require("path"),
       CopyWebpackPlugin  = require("copy-webpack-plugin");
 
 module.exports = {
+    target: "electron-renderer",
+
     entry: {
         index: "./lib/js/src/react/index.js",
     },

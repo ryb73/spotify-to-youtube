@@ -6,9 +6,15 @@ module Page = {
     include ReactRe.Component.Stateful;
     let name = "Page";
     type props = unit;
-    type state = { selectedPlaylistId : option string };
+    type state = {
+        selectedPlaylistId : option string,
+        signedIntoYouTube: bool
+    };
 
-    let getInitialState _ => { selectedPlaylistId: None };
+    let getInitialState _ => {
+        selectedPlaylistId: None,
+        signedIntoYouTube: false
+     };
 
     let parsedHashString = {
         let hashStr = Dom.window |> location |> hash;
@@ -31,8 +37,8 @@ module Page = {
 
     let spotify = SpotifyHelper.create ();
 
-    let playlistSelected _ playlistId => {
-        Some { selectedPlaylistId: Some playlistId };
+    let playlistSelected { state } playlistId => {
+        Some { ...state, selectedPlaylistId: Some playlistId };
     };
 
     let validateSpotifyResponse { updater } access_token => {
@@ -47,16 +53,22 @@ module Page = {
         };
     };
 
-    let onSignedIntoYouTube _ _ => None;
+    let onSignedIntoYouTube { state } _ => {
+        Some { ...state, signedIntoYouTube: true };
+    };
 
     let render bag => {
         let { state, updater } = bag;
 
         switch state.selectedPlaylistId {
-            | Some _ => <PromptConnectYouTube onSignedIn=(updater onSignedIntoYouTube) />;
             | None => switch (Js.Undefined.to_opt parsedHashString##access_token) {
                 | None => <PromptConnectSpotify />;
                 | Some access_token => validateSpotifyResponse bag access_token;
+            };
+
+            | Some selectedPlaylistId => switch state.signedIntoYouTube {
+                | true => <AllowExportPlaylist spotify playlistId=selectedPlaylistId />;
+                | false => <PromptConnectYouTube onSignedIn=(updater onSignedIntoYouTube) />;
             };
         };
     };

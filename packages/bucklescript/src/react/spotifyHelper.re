@@ -60,3 +60,29 @@ let getMyPlaylists spotify => {
     getMyUserId spotify
         |> then_ (getUserPlaylistsPage spotify 0 [||]);
 };
+
+let rec getPlaylistTracksByPage (spotify:Js.t Spotify.t) playlistId offset currentItems userId => {
+    let limit = Spotify.maxPageSizeTracks;
+
+    let apiOptions = [%bs.obj {
+        limit: Js.Undefined.return limit,
+        offset: Js.Undefined.return offset,
+        fields: Js.undefined
+    }];
+
+    spotify##getPlaylistTracks userId playlistId apiOptions
+        |> then_ (fun data => {
+            let combinedItems = Js.Array.concat data##body##items currentItems;
+            let remainingItems = data##body##total - limit - offset;
+            if(remainingItems > 0) {
+                getPlaylistTracksByPage spotify playlistId (offset + limit) combinedItems userId;
+            } else {
+                resolve combinedItems;
+            }
+        });
+};
+
+let getPlaylistTracks (spotify:Js.t Spotify.t) playlistId => {
+    getMyUserId spotify
+        |> then_ (getPlaylistTracksByPage spotify playlistId 0 [||]);
+};

@@ -97,6 +97,22 @@ module Dock = struct
   end [@bs]
 end
 
+module Dialog = struct
+  class type showSaveDialogOptions = object
+    method title : string Js.undefined
+    method defaultPath : string Js.undefined
+    method buttonLabel : string Js.undefined
+    (*method filters : FileFilter[] (optional)*)
+    method message : string Js.undefined
+    method nameFieldLabel : string Js.undefined
+    method showsTagField : Js.boolean Js.undefined
+  end [@bs]
+
+  class type t = object
+    method showSaveDialog : showSaveDialogOptions Js.undefined -> (string -> unit) Js.undefined -> unit
+  end [@bs]
+end
+
 module Electron = struct
   module App = struct
     type ns = [`App | `EventEmitter]
@@ -183,4 +199,10 @@ module Electron = struct
   module BrowserWindow = struct
     external mk : unit -> BrowserWindow.t Js.t = "BrowserWindow" [@@bs.new] [@@bs.module "electron"]
   end
+
+  class type remote = object
+    method dialog : Dialog.t Js.t
+  end [@bs]
+
+  external remote : remote Js.t = "" [@@bs.module "electron"]
 end

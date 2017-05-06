@@ -19,15 +19,15 @@ module PromptConnectYouTube = {
     let componentDidMount bag => {
         let { setState, props } = bag;
 
-        YoutubeHelper.init ()
+        YouTubeHelper.init ()
             |> then_ (fun _ => {
                 setState (fun { state } => { ...state, initialized: true });
 
-                let _ = if(YoutubeHelper.isSignedIn ()) {
+                if(YouTubeHelper.isSignedIn ()) {
                     props.onSignedIn ();
                 } else {
-                    YoutubeHelper.listenSignInChange @@ signInStatusChanged bag;
-                }
+                    YouTubeHelper.listenSignInChange @@ signInStatusChanged bag;
+                };
 
                 resolve ();
             });
@@ -35,16 +35,16 @@ module PromptConnectYouTube = {
         None;
     };
 
-    let loginClicked bag _ => {
-        None;
+    let loginClicked _ => {
+        YouTubeHelper.signIn ();
     };
 
     let renderBody bag => {
-        let { state, updater } = bag;
+        let { state } = bag;
 
         if(state.initialized) {
             <div>
-                <a href="#" onClick=(updater loginClicked)>(ReactRe.stringToElement "Log In")</a>
+                <a href="#" onClick=loginClicked>(ReactRe.stringToElement "Log In")</a>
             </div>;
         } else {
             <div>

@@ -8,7 +8,11 @@ let listenSignInChange listener => {
 };
 
 let isSignedIn () => {
-    /*let auth = Google.Auth2.getAuthInstance ();
-    auth##isSignedIn##get () [@bs];*/
-    true;
+    let auth = Google.Auth2.getAuthInstance ();
+    auth##isSignedIn##get () [@bs];
+};
+
+let signIn () => {
+    let auth = Google.Auth2.getAuthInstance ();
+    auth##signIn ();
 };

@@ -13,6 +13,14 @@ module.exports = {
         filename: "js/[name].js",
     },
 
+    module: {
+        rules: [{
+            test: /\.js$/,
+            enforce: "pre",
+            loader: "webpack-strip-block"
+        }]
+    },
+
     plugins: [
         new CopyWebpackPlugin([{
             from: "node_modules/font-awesome/css",

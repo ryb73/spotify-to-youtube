@@ -109,7 +109,7 @@ module Dialog = struct
   end [@bs]
 
   class type t = object
-    method showSaveDialog : showSaveDialogOptions Js.undefined -> (string -> unit) Js.undefined -> unit
+    method showSaveDialog : showSaveDialogOptions Js.undefined -> (string -> unit) Js.undefined -> string
   end [@bs]
 end
 

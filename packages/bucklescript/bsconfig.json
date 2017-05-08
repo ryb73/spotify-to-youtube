@@ -6,7 +6,9 @@
         "bs-node-http-server",
         "bs-spotify-web-api",
         "bs-qs",
-        "bs-google-apis-web"
+        "bs-google-apis-web",
+        "bs-node",
+        "bs-fast-csv"
     ],
     "reason" : { "react-jsx" : true },
     "sources" : {

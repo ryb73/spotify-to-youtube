@@ -1,3 +1,5 @@
 lib/
 html/js/
 .vscode/
+test.csv
+.merlin

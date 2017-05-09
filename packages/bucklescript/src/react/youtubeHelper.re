@@ -16,3 +16,16 @@ let signIn () => {
     let auth = Google.Auth2.getAuthInstance ();
     auth##signIn ();
 };
+
+let doSearch query => {
+    let opts = [%bs.obj {
+        part: "snippet",
+        q: query,
+        maxResults: Js.Undefined.return 20
+    }];
+    Google.YouTube.Search.list opts;
+};
+
+/*let getVideoDetails videoId => {
+
+};*/

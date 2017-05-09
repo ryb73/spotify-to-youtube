@@ -1,5 +1,7 @@
 open Js.Promise;
 
+let s2e = ReactRe.stringToElement;
+
 module AllowExportPlaylist = {
     include ReactRe.Component.Stateful;
     let name = "AllowExportPlaylist";
@@ -10,21 +12,13 @@ module AllowExportPlaylist = {
 
     type state = {
         statusMessage: option string,
-        errorMessage: option string
+        errorMessage: option string,
+        matchingFinished: bool
     };
 
-    let getInitialState _ => { statusMessage: None, errorMessage: None };
+    let getInitialState _ => { statusMessage: None, errorMessage: None, matchingFinished: false };
 
     let getTracks { props } => SpotifyHelper.getPlaylistTracks props.spotify props.playlistId;
-
-    let matchTrack track => resolve track;
-
-    let formatMatchedTrack track => {
-        resolve [%bs.obj {
-            artist: (track##track##artists).(0)##name,
-            song: track##track##name
-        }];
-    };
 
     let writeMatch csvStream formattedMatch => {
         FastCsv.write csvStream formattedMatch;
@@ -47,8 +41,7 @@ module AllowExportPlaylist = {
             | [ track, ...remaining ] => {
                 updateStatusForTrack bag track;
 
-                matchTrack track
-                    |> then_ formatMatchedTrack
+                VideoMatcher.matchTrack track
                     |> then_ @@ writeMatch csvStream
                     |> then_ (fun _ => matchEachTrack bag csvStream remaining)
             }
@@ -74,7 +67,7 @@ module AllowExportPlaylist = {
         openCsvFile bag outputFilename
             |> then_ (fun _ => {
                 setState (fun { state } => {
-                    ...state, statusMessage: Some "Complete!"
+                    ...state, statusMessage: None, matchingFinished: true
                 });
 
                 resolve ();
@@ -94,50 +87,62 @@ module AllowExportPlaylist = {
         Some { ...state, statusMessage: Some "Loading playlist tracks" };
     };
 
-    let skipStep _ _ => None;
+    let goToNextStep _ _ => None;
 
     let renderOptions { updater } =>
         <p>
             <a href="#" onClick=(updater beginMatching)>
-                (ReactRe.stringToElement "Begin matching songs to videos")
+                (s2e "Begin matching songs to videos")
             </a>
-            (ReactRe.stringToElement " | ")
-            <a href="#" onClick=(updater skipStep)>
-                (ReactRe.stringToElement {js|I already have a CSV – Skip this step|js})
+            (s2e " | ")
+            <a href="#" onClick=(updater goToNextStep)>
+                (s2e {js|I already have a CSV – Skip this step|js})
             </a>
         </p>;
 
     let renderErrorMessage { state } => {
         switch state.errorMessage {
-            | None => ReactRe.stringToElement ""
-            | Some msg => ReactRe.stringToElement @@ msg
+            | None => s2e ""
+            | Some msg => s2e msg
         };
     };
 
     let renderStatusSection bag => {
-        let { state } = bag;
+        let { state, updater } = bag;
 
-        switch state.statusMessage {
-            | Some msg => (ReactRe.stringToElement @@ "!" ^ msg)
-            | None =>
-                <div>
-                    (renderOptions bag)
-                    (renderErrorMessage bag)
-                </div>
-        };
+        if(state.matchingFinished) {
+            <span>
+                (s2e "Complete! ")
+                <a href="#" onClick=(updater goToNextStep)>(s2e "Click here to continue.")</a>
+            </span>
+        } else {
+            switch state.statusMessage {
+                | Some msg =>
+                    <div>
+                        <i className="fa fa-refresh fa-spin" />
+                        (s2e @@ " " ^ msg)
+                    </div>
+
+                | None =>
+                    <div>
+                        (renderOptions bag)
+                        (renderErrorMessage bag)
+                    </div>
+            };
+        }
     };
 
     let render bag => {
         <div>
-            <h1>(ReactRe.stringToElement "Step 4: Match Songs to YouTube Videos")</h1>
+            <h1>(s2e "Step 4: Match Songs to YouTube Videos")</h1>
             <p>
-                (ReactRe.stringToElement @@ "A CSV file, which can be opened using Microsoft Excel or other similar " ^
+                (s2e @@ "A CSV file, which can be opened using Microsoft Excel or other similar " ^
                     "applications, will now be created. The file will include each song from your Spotify playlist " ^
                     "along with the best match on YouTube. You can modify the CSV to add/remove/modify any songs " ^
                     "you wish. The CSV will then be used in the next step to create the YouTube playlist.")
             </p>
             <p>
-                (ReactRe.stringToElement @@ "If you've already completed this step and have a CSV ready, you can " ^
+                (s2e @@ "If you've already completed this step and have a CSV ready, you can " ^
                     "skip this and move on to the next step.")
             </p>
             (renderStatusSection bag)

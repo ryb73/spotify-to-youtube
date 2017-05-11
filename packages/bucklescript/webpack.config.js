@@ -1,6 +1,6 @@
-const path               = require("path"),
-      CopyWebpackPlugin  = require("copy-webpack-plugin"),
-      webpack            = require("webpack");
+const path              = require("path"),
+      CopyWebpackPlugin = require("copy-webpack-plugin"),
+      webpack           = require("webpack");
 
 module.exports = {
     target: "electron-renderer",
@@ -12,6 +12,21 @@ module.exports = {
     output: {
         path: path.join(__dirname, "html"),
         filename: "js/[name].js",
+    },
+
+    module: {
+        loaders: [{
+            // This is a hacky way to get remotes to work. This is the only way I could think
+            // of that didn't result in a bunch of duplicated code
+            test: /remote.+\.js$/,
+            loader: "string-replace-loader",
+            query: {
+                search: "(\\W)require",
+                replace: "$1require('electron').remote.require",
+                flags: "g",
+                strict: true
+            }
+        }]
     },
 
     plugins: [

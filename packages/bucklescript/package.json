@@ -27,6 +27,7 @@
     "bs-webapi": "0.4.1",
     "copy-webpack-plugin": "4.0.1",
     "dependency-env": "*",
+    "flat-cache": "1.2.2",
     "font-awesome": "4.7.0",
     "nopam": "*",
     "ocamlBetterErrors": "*",
@@ -34,6 +35,7 @@
     "react-dom": "15.5.4",
     "reason-react": "0.1.1",
     "spotify-web-api-node": "2.3.6",
+    "string-replace-loader": "1.2.0",
     "webpack": "2.4.1"
   },
   "myreason": "*",

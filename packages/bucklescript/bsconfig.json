@@ -8,12 +8,13 @@
         "bs-qs",
         "bs-google-apis-web",
         "bs-node",
-        "bs-fast-csv"
+        "bs-fast-csv",
+        "bs-flat-cache"
     ],
     "reason" : { "react-jsx" : true },
     "sources" : {
         "dir" : "src",
-        "subdirs": [ "react" ]
+        "subdirs": [ "react", "remote" ]
     },
     "bsc-flags": [ "-w -10-23" ]
 }

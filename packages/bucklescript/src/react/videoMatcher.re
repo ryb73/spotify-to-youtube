@@ -3,6 +3,8 @@ open Js.Promise;
 type match 'a = VidMatch 'a string
                 | NoMatch;
 
+external encodeURIComponent : string => string = "" [@@bs.val];
+
 let headers = [%bs.obj {
     artist: "Artist",
     song: "Song",
@@ -12,13 +14,13 @@ let headers = [%bs.obj {
     searchUrl: "Search URL"
 }];
 
-external encodeURIComponent : string => string = "" [@@bs.val];
+let getTrackArtist track => (track##track##artists).(0)##name;
 
 let getTrackSearchUrl track => "https://www.youtube.com/results?search_query=" ^
-    (encodeURIComponent @@ (track##track##artists).(0)##name ^ " " ^ track##track##name);
+    (encodeURIComponent @@ getTrackArtist track ^ " " ^ track##track##name);
 
 let emptyResult track => resolve [%bs.obj {
-    artist: (track##track##artists).(0)##name,
+    artist: getTrackArtist track,
     song: track##track##name,
     matchCategory: "Not Found",
     videoTitle: "",
@@ -29,7 +31,7 @@ let emptyResult track => resolve [%bs.obj {
 let idToLink = (^) "https://youtu.be/";
 
 let videoResult track video matchCategory => resolve [%bs.obj {
-    artist: (track##track##artists).(0)##name,
+    artist: getTrackArtist track,
     song: track##track##name,
     matchCategory,
     videoTitle: video##snippet##title,
@@ -49,7 +51,7 @@ let sanitize str => {
 };
 
 let filterBadResults track searchResults => {
-    let sanitizedArtist = sanitize (track##track##artists).(0)##name;
+    let sanitizedArtist = sanitize @@ getTrackArtist track;
     let sanitizedTrack = sanitize track##track##name;
 
     searchResults
@@ -99,36 +101,51 @@ let findAnyOfficialVideo matchType videos => {
     attempt1 <||> attempt2;
 };
 
-let findOfficialVideo videos => {
-    let filteredVideos = videos
-        |> Js.Array.filter (fun video => {
-            let title = sanitize video##snippet##title;
-            not @@ Js.String.includes "lyric" title;
-        });
+let getTitlesIncluding str =>
+    Js.Array.filter (fun video => {
+        Js.String.includes str (sanitize video##snippet##title);
+    });
 
-    findAnyOfficialVideo "Official Video" filteredVideos;
+let getTitlesNotIncluding str =>
+    Js.Array.filter (fun video => {
+        not @@ Js.String.includes str (sanitize video##snippet##title);
+    });
+
+let findOfficialVideo videos => {
+    getTitlesNotIncluding "lyric" videos
+        |> findAnyOfficialVideo "Official Video";
 };
 
 let findOfficialLyricVideo videos => {
-    [%bs.debugger];
-    let filteredVideos = videos
-        |> Js.Array.filter (fun video => {
-            Js.String.includes "lyric" video##snippet##title
-        });
+    getTitlesIncluding "lyric" videos
+        |> findAnyOfficialVideo "Official Lyric Video";
+};
 
-    findAnyOfficialVideo "Official Lyric Video" filteredVideos;
+let getFirstMatch matchType videos => {
+    switch (Js.Array.length videos) {
+        | 0 => NoMatch
+        | _ => VidMatch videos.(0) matchType;
+    };
 };
 
 let findLyricVideo videos => {
-    let video = videos
-        |> Js.Array.find (fun video => {
-            Js.String.includes "lyric" video##snippet##title;
-        });
-
-    toMatch "Lyric Video" video;
+    getTitlesIncluding "lyric" videos
+        |> getFirstMatch "Lyric Video";
 };
 
-let getAnyVideo videos => VidMatch videos.(0) "Possible Official Video";
+let findPossibleOfficialVideo track videos => {
+    /* Try to filter out live videos unless the track title/artist actually contains
+        the word "live"  */
+    let searchString = (sanitize @@ getTrackArtist track) ^
+        (sanitize track##track##name);
+    let filteredResults = switch (Js.String.includes "live" searchString) {
+        | false => getTitlesNotIncluding "live" videos
+        | true => videos
+    };
+
+    getTitlesNotIncluding "lyric" filteredResults
+        |> getFirstMatch "Possible Official Video";
+};
 
 let resolveBestMatch track videoSearchResults => {
     let filteredResults = filterBadResults track videoSearchResults;
@@ -138,18 +155,18 @@ let resolveBestMatch track videoSearchResults => {
         let match =
             findOfficialVideo filteredResults <||>
             findOfficialLyricVideo filteredResults <||>
-            getAnyVideo filteredResults <||>
-            findLyricVideo filteredResults; /* we obviously never get here but leaving anyway */
+            findPossibleOfficialVideo track filteredResults <||>
+            findLyricVideo filteredResults;
 
         switch match {
             | VidMatch video matchType => videoResult track video matchType
-            | NoMatch => videoResult track filteredResults.(0) "Possible Match"
+            | NoMatch => emptyResult track
         };
     }
 };
 
 let matchTrack track => {
-    let artistName = (track##track##artists).(0)##name;
+    let artistName = getTrackArtist track;
     let trackName = track##track##name;
     YouTubeHelper.doSearch (artistName ^ " " ^ trackName)
         |> then_ (fun (data:Js.t Google.YouTube.Search.result) => {

@@ -1,14 +1,25 @@
 open Js.Promise;
 
-type match 'a = VidMatch 'a string
-                | NoMatch;
+type match 'a = {
+    video: 'a,
+    matchType: [
+        | `OfficialVideo
+        | `OfficialLyricVideo
+        | `LyricVideo
+        | `AudioOnly
+        | `Acoustic
+        | `Live
+        | `LiveInStudio
+        | `Unknown
+    ]
+};
 
 external encodeURIComponent : string => string = "" [@@bs.val];
 
 let headers = [%bs.obj {
     artist: "Artist",
     song: "Song",
-    matchCategory: "Match Category",
+    matchType: "Match Category",
     videoTitle: "Video Title",
     videoUrl: "Video URL",
     searchUrl: "Search URL"
@@ -22,7 +33,7 @@ let getTrackSearchUrl track => "https://www.youtube.com/results?search_query=" ^
 let emptyResult track => resolve [%bs.obj {
     artist: getTrackArtist track,
     song: track##track##name,
-    matchCategory: "Not Found",
+    matchType: "Not Found",
     videoTitle: "",
     videoUrl: "",
     searchUrl: getTrackSearchUrl track
@@ -30,10 +41,21 @@ let emptyResult track => resolve [%bs.obj {
 
 let idToLink = (^) "https://youtu.be/";
 
-let videoResult track video matchCategory => resolve [%bs.obj {
+let matchTypeString matchType => switch matchType {
+    | `OfficialVideo => "Official Video"
+    | `OfficialLyricVideo => "Official Lyric Video"
+    | `LyricVideo => "Lyric Video"
+    | `Acoustic => "Acoustic"
+    | `Live => "Live"
+    | `LiveInStudio => "Live in Studio"
+    | `AudioOnly => "Audio Only"
+    | `Unknown => "Unknown"
+};
+
+let videoResult track video matchType => resolve [%bs.obj {
     artist: getTrackArtist track,
     song: track##track##name,
-    matchCategory,
+    matchType: matchTypeString matchType,
     videoTitle: video##snippet##title,
     videoUrl: idToLink video##id##videoId,
     searchUrl: getTrackSearchUrl track
@@ -56,95 +78,69 @@ let filterBadResults track searchResults => {
 
     searchResults
         |> Js.Array.filter (fun video => {
-            [%bs.debugger];
             let sanitizedTitle = sanitize video##snippet##title;
             (Js.String.includes sanitizedArtist sanitizedTitle) &&
-                (Js.String.includes sanitizedTrack sanitizedTitle) &&
-                (not @@ Js.String.includes "audio" sanitizedTitle);
+                (Js.String.includes sanitizedTrack sanitizedTitle);
         });
 };
 
-let toMatch matchType video => switch video {
-    | None => NoMatch
-    | Some v => VidMatch v matchType
-};
-
 let (<||>) a b => switch (a,b) {
-    | (VidMatch _ _, _) => a
-    | (_, VidMatch _ _) => b
-    | (NoMatch, NoMatch) => NoMatch
+    | (Some _, _) => a
+    | (_, Some _) => b
+    | (None, None) => None
 };
 
-/* Includes lyric videos */
-let findAnyOfficialVideo matchType videos => {
-    /* Look for video with "Offical" in the name */
-    let attempt1 = videos
-        |> Js.Array.find (fun video => {
-            let title = video##snippet##title;
-            let match = Js.String.match_ [%bs.re "/(^|[^a-z])official/i"] title;
-            switch match {
-                | None => false
-                | Some _ => true
-            };
-        })
-        |> toMatch matchType;
-
-    /* Look for a Vevo video */
-    let attempt2 = videos
-        |> Js.Array.find (fun video => {
-            video##snippet##channelTitle
-                |> Js.String.toLowerCase
-                |> Js.String.includes "vevo";
-        })
-        |> toMatch matchType;
-
-    attempt1 <||> attempt2;
-};
-
-let getTitlesIncluding str =>
-    Js.Array.filter (fun video => {
-        Js.String.includes str (sanitize video##snippet##title);
-    });
-
-let getTitlesNotIncluding str =>
-    Js.Array.filter (fun video => {
-        not @@ Js.String.includes str (sanitize video##snippet##title);
-    });
-
-let findOfficialVideo videos => {
-    getTitlesNotIncluding "lyric" videos
-        |> findAnyOfficialVideo "Official Video";
-};
-
-let findOfficialLyricVideo videos => {
-    getTitlesIncluding "lyric" videos
-        |> findAnyOfficialVideo "Official Lyric Video";
-};
-
-let getFirstMatch matchType videos => {
-    switch (Js.Array.length videos) {
-        | 0 => NoMatch
-        | _ => VidMatch videos.(0) matchType;
-    };
-};
-
-let findLyricVideo videos => {
-    getTitlesIncluding "lyric" videos
-        |> getFirstMatch "Lyric Video";
-};
-
-let findPossibleOfficialVideo track videos => {
-    /* Try to filter out live videos unless the track title/artist actually contains
-        the word "live"  */
+let searchForKeyword track video keyword => {
     let searchString = (sanitize @@ getTrackArtist track) ^
         (sanitize track##track##name);
-    let filteredResults = switch (Js.String.includes "live" searchString) {
-        | false => getTitlesNotIncluding "live" videos
-        | true => videos
-    };
 
-    getTitlesNotIncluding "lyric" filteredResults
-        |> getFirstMatch "Possible Official Video";
+    let sanitizedTitle = sanitize video##snippet##title;
+
+    /* If the song title contains the keyword, then consider it a non match to avoid
+        false positives */
+    if (Js.String.includes keyword searchString) {
+        false;
+    } else {
+        let regexStr = "(^|[^a-z])" ^ keyword ^ "($|[^a-z])";
+        let regex = Js.Re.fromStringWithFlags regexStr flags::"i";
+
+        switch (Js.String.match_ regex sanitizedTitle) {
+            | Some _ => true
+            | _ => false
+        };
+    }
+};
+
+let searchForAnyKeywords track video keywords => {
+    Js.Array.some (searchForKeyword track video) keywords;
+};
+
+let searchForAllKeywords track video keywords => {
+    Js.Array.every (searchForKeyword track video) keywords;
+};
+
+let classifyVideo track video : match 'a => {
+    let matchType =
+        searchForKeyword track video "acoustic" ? `Acoustic
+        : searchForAnyKeywords track video [| "studio", "sessions?" |] ? `LiveInStudio
+        : searchForKeyword track video "live" ? `Live
+        : searchForKeyword track video "audio" ? `AudioOnly
+        : searchForAllKeywords track video [| "lyrics?", "official" |] ? `OfficialLyricVideo
+        : searchForKeyword track video "lyrics?" ? `LyricVideo
+        : searchForKeyword track video "official" ? `OfficialVideo
+        : video##snippet##channelTitle
+                |> Js.String.toLowerCase
+                |> Js.String.includes "vevo" ? `OfficialVideo
+        : `Unknown;
+
+    { video, matchType };
+};
+
+let findVideoOfType matchType matches => {
+    matches |>
+        Js.Array.find (fun match => {
+            match.matchType === matchType;
+        });
 };
 
 let resolveBestMatch track videoSearchResults => {
@@ -152,15 +148,19 @@ let resolveBestMatch track videoSearchResults => {
     if(Js.Array.length filteredResults === 0) {
         emptyResult track;
     } else {
+        let classifications = Js.Array.map (classifyVideo track) filteredResults;
+
         let match =
-            findOfficialVideo filteredResults <||>
-            findOfficialLyricVideo filteredResults <||>
-            findPossibleOfficialVideo track filteredResults <||>
-            findLyricVideo filteredResults;
+            findVideoOfType `OfficialVideo classifications <||>
+            findVideoOfType `OfficialLyricVideo classifications <||>
+            findVideoOfType `Unknown classifications <||>
+            findVideoOfType `LyricVideo classifications <||>
+            findVideoOfType `Acoustic classifications <||>
+            findVideoOfType `Live classifications;
 
         switch match {
-            | VidMatch video matchType => videoResult track video matchType
-            | NoMatch => emptyResult track
+            | Some { video, matchType } => videoResult track video matchType
+            | None => emptyResult track
         };
     }
 };
@@ -169,13 +169,7 @@ let matchTrack track => {
     let artistName = getTrackArtist track;
     let trackName = track##track##name;
     YouTubeHelper.doSearch (artistName ^ " " ^ trackName)
-        |> then_ (fun (data:Js.t Google.YouTube.Search.result) => {
-            let items = data##result##items;
-
-            if(Js.Array.length items === 0) {
-                emptyResult track;
-            } else {
-                resolveBestMatch track items;
-            }
+        |> then_ (fun data => {
+            resolveBestMatch track data##result##items;
         });
 };

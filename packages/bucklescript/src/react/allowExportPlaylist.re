@@ -1,5 +1,9 @@
 open Js.Promise;
 
+module CsvFormatter = FastCsv.Format({
+    type t = Js.t VideoMatcher.csvRow;
+});
+
 let s2e = ReactRe.stringToElement;
 
 module AllowExportPlaylist = {
@@ -7,7 +11,8 @@ module AllowExportPlaylist = {
     let name = "AllowExportPlaylist";
     type props = {
         spotify: Js.t Spotify.t,
-        playlistId: string
+        playlistId: string,
+        onNextStep: unit => unit
     };
 
     type state = {
@@ -21,7 +26,7 @@ module AllowExportPlaylist = {
     let getTracks { props } => SpotifyHelper.getPlaylistTracks props.spotify props.playlistId;
 
     let writeMatch csvStream formattedMatch => {
-        FastCsv.write csvStream formattedMatch;
+        CsvFormatter.write csvStream formattedMatch;
         resolve ();
     };
 
@@ -49,9 +54,21 @@ module AllowExportPlaylist = {
     };
 
     let openCsvFile bag filename => {
-        Node.Fs.createWriteStream filename Js.undefined (fun fileStream => {
-            FastCsv.createWriteStream Js.undefined (fun csvStream => {
-                FastCsv.pipe csvStream fileStream;
+        let headers = {
+            "artist": "Artist",
+            "song": "Song",
+            "matchType": "Match Category",
+            "videoTitle": "Video Title",
+            "videoUrl": "Video URL",
+            "searchUrl": "Search URL"
+        };
+
+        Node.Fs.FileWriteStream.create filename Js.undefined (fun fileStream => {
+            CsvFormatter.create Js.undefined (fun csvStream => {
+                CsvFormatter.pipe csvStream (Node.Fs.FileWriteStream.writeable fileStream);
+
+                CsvFormatter.write csvStream headers;
+
                 getTracks bag
                     |> then_ (fun arr => resolve @@ Array.to_list arr)
                     |> then_ @@ matchEachTrack bag csvStream;
@@ -87,7 +104,10 @@ module AllowExportPlaylist = {
         Some { ...state, statusMessage: Some "Loading playlist tracks" };
     };
 
-    let goToNextStep _ _ => None;
+    let goToNextStep { props } _ => {
+        props.onNextStep ();
+        None;
+    };
 
     let renderOptions { updater } =>
         <p>
@@ -152,4 +172,4 @@ module AllowExportPlaylist = {
 
 include ReactRe.CreateComponent AllowExportPlaylist;
 
-let createElement ::spotify ::playlistId => wrapProps { spotify, playlistId };
+let createElement ::spotify ::playlistId ::onNextStep => wrapProps { spotify, playlistId, onNextStep };

@@ -7,13 +7,15 @@ module Page = {
     let name = "Page";
     type props = unit;
     type state = {
-        selectedPlaylistId : option string,
-        signedIntoYouTube: bool
+        selectedPlaylist : option (Js.t Spotify.playlist),
+        signedIntoYouTube: bool,
+        exportFinished: bool
     };
 
     let getInitialState _ => {
-        selectedPlaylistId: None,
-        signedIntoYouTube: false
+        selectedPlaylist: None,
+        signedIntoYouTube: false,
+        exportFinished: false
      };
 
     let parsedHashString = {
@@ -37,8 +39,16 @@ module Page = {
 
     let spotify = SpotifyHelper.create ();
 
-    let playlistSelected { state } playlistId => {
-        Some { ...state, selectedPlaylistId: Some playlistId };
+    let playlistSelected { state } playlist => {
+        Some { ...state, selectedPlaylist: Some playlist };
+    };
+
+    let onSignedIntoYouTube { state } _ => {
+        Some { ...state, signedIntoYouTube: true };
+    };
+
+    let afterExport { state } _ => {
+        Some { ...state, exportFinished: true };
     };
 
     let validateSpotifyResponse { updater } access_token => {
@@ -53,23 +63,22 @@ module Page = {
         };
     };
 
-    let onSignedIntoYouTube { state } _ => {
-        Some { ...state, signedIntoYouTube: true };
-    };
-
     let render bag => {
         let { state, updater } = bag;
 
-        switch state.selectedPlaylistId {
+        switch state.selectedPlaylist {
             | None => switch (Js.Undefined.to_opt parsedHashString##access_token) {
                 | None => <PromptConnectSpotify />;
                 | Some access_token => validateSpotifyResponse bag access_token;
             };
 
-            | Some selectedPlaylistId => switch state.signedIntoYouTube {
-                | true => <AllowExportPlaylist spotify playlistId=selectedPlaylistId />;
-                | false => <PromptConnectYouTube onSignedIn=(updater onSignedIntoYouTube) />;
-            };
+            | Some selectedPlaylist =>
+                (not state.signedIntoYouTube) ?
+                    <PromptConnectYouTube onSignedIn=(updater onSignedIntoYouTube) />
+                : (not state.exportFinished) ?
+                    <AllowExportPlaylist spotify playlistId=selectedPlaylist##id onNextStep=(updater afterExport) />
+                :
+                    <ImportPlaylist playlistName=selectedPlaylist##name />
         };
     };
 };

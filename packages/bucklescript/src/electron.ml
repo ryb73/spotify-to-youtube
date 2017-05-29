@@ -108,8 +108,12 @@ module Dialog = struct
     method showsTagField : Js.boolean Js.undefined
   end [@bs]
 
+  class type showOpenDialogOptions = object
+  end [@bs]
+
   class type t = object
     method showSaveDialog : showSaveDialogOptions Js.undefined -> (string -> unit) Js.undefined -> string
+    method showOpenDialog : showOpenDialogOptions Js.undefined -> (string array -> unit) Js.undefined -> string array
   end [@bs]
 end
 

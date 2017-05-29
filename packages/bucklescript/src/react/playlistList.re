@@ -5,7 +5,7 @@ module PlaylistList = {
     let name = "PlaylistList";
     type props = {
         spotify: Js.t Spotify.t,
-        playlistSelected: string => unit
+        playlistSelected: (Js.t Spotify.playlist) => unit
     };
 
     type state = {
@@ -46,17 +46,17 @@ module PlaylistList = {
         None;
     };
 
-    let playlistSelected playlistId { props } e => {
+    let playlistSelected playlist { props } e => {
         ReactEventRe.Mouse.preventDefault e;
 
-        props.playlistSelected playlistId;
+        props.playlistSelected playlist;
 
         None;
     };
 
     let renderPlaylist { updater } playlist => {
         <li key=playlist##id>
-            <a href="#" onClick=(updater (playlistSelected playlist##id))>(ReactRe.stringToElement playlist##name)</a>
+            <a href="#" onClick=(updater (playlistSelected playlist))>(ReactRe.stringToElement playlist##name)</a>
         </li>
     };
 

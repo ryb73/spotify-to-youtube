@@ -1,5 +1,7 @@
 open Js.Promise;
 
+external encodeURIComponent : string => string = "" [@@bs.val];
+
 type match 'a = {
     video: 'a,
     matchType: [
@@ -14,16 +16,14 @@ type match 'a = {
     ]
 };
 
-external encodeURIComponent : string => string = "" [@@bs.val];
-
-let headers = [%bs.obj {
-    artist: "Artist",
-    song: "Song",
-    matchType: "Match Category",
-    videoTitle: "Video Title",
-    videoUrl: "Video URL",
-    searchUrl: "Search URL"
-}];
+type csvRow = {.
+    artist: string,
+    song: string,
+    matchType: string,
+    videoTitle: string,
+    videoUrl: string,
+    searchUrl: string
+};
 
 let getTrackArtist track => (track##track##artists).(0)##name;
 

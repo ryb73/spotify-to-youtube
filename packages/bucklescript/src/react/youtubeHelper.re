@@ -1,4 +1,5 @@
 open Js.Promise;
+open Google.YouTube;
 
 external setTimeout : (unit => unit) => int => unit = "" [@@bs.val];
 
@@ -8,12 +9,12 @@ let init () => Google.Client.init clientId [| `YouTubeSSL |];
 
 let listenSignInChange listener => {
     let auth = Google.Auth2.getAuthInstance ();
-    auth##isSignedIn##listen listener [@bs];
+    auth##isSignedIn##listen listener;
 };
 
 let isSignedIn () => {
     let auth = Google.Auth2.getAuthInstance ();
-    auth##isSignedIn##get () [@bs];
+    auth##isSignedIn##get ();
 };
 
 let signIn () => {
@@ -27,7 +28,8 @@ let queryYoutube query => {
         q: query,
         maxResults: Js.Undefined.return 20
     }];
-    Google.YouTube.Search.list opts
+
+    Search.list opts
         |> then_ (fun data => {
             RemoteYouTubeCache.set query data;
             resolve data;
@@ -53,6 +55,14 @@ let doSearch query => {
     };
 };
 
-/*let getVideoDetails videoId => {
+let getUserPlaylists () => {
+    Playlists.list @@ Playlists.listOptions part::"id,snippet" mine::Js.true_ ();
+};
 
-};*/
+let createPlaylist name => {
+    Playlists.insert @@ Playlists.insertOptions part::"id,snippet" title::name ();
+};
+
+let insertPlaylistItem playlistId videoId => {
+    PlaylistItems.insert @@ PlaylistItems.insertOptions playlistId::playlistId videoId::videoId ();
+};

@@ -21,10 +21,20 @@ module.exports = {
             test: /remote.+\.js$/,
             loader: "string-replace-loader",
             query: {
-                search: "(\\W)require",
+                search: "(\\W)require(?=\\()",
                 replace: "$1require('electron').remote.require",
                 flags: "g",
                 strict: true
+            }
+        },{
+            // https://github.com/bloomberg/bucklescript/issues/1653
+            // This is a really bad solution but will work for now
+            test: /\.js$/,
+            loader: "string-replace-loader",
+            query: {
+                search: "(\\W)Promise\\.all\\(([\\w\\s,]+)\\)",
+                replace: "$1Promise.all([$2])",
+                flags: "g"
             }
         }]
     },

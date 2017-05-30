@@ -30,9 +30,12 @@ module AllowExportPlaylist = {
         resolve ();
     };
 
-    let updateStatusForTrack { setState } track => {
-        let message = (track##track##artists).(0)##name ^ {js| – |js} ^
-            track##track##name;
+    let updateStatusForTrack { setState } track currentIndex numRemaining => {
+        let artist = (track##track##artists).(0)##name;
+        let song = track##track##name;
+        let currentTrack = currentIndex + 1;
+        let totalTracks = currentTrack + numRemaining;
+        let message = {j|[ $currentTrack / $totalTracks ] $artist – $song|j};
 
         setState (fun { state } => {
             { ...state, statusMessage: Some message }
@@ -43,8 +46,8 @@ module AllowExportPlaylist = {
     let rec matchEachTrack bag csvStream tracks => {
         switch tracks {
             | [] => resolve ()
-            | [ track, ...remaining ] => {
-                updateStatusForTrack bag track;
+            | [ (track, index), ...remaining ] => {
+                updateStatusForTrack bag track index (List.length tracks);
 
                 VideoMatcher.matchTrack track
                     |> then_ @@ writeMatch csvStream
@@ -70,7 +73,12 @@ module AllowExportPlaylist = {
                 CsvFormatter.write csvStream headers;
 
                 getTracks bag
-                    |> then_ (fun arr => resolve @@ Array.to_list arr)
+                    |> then_ (fun trackArr => {
+                        trackArr
+                            |> Js.Array.mapi (fun track i => (track, i))
+                            |> Array.to_list
+                            |> resolve;
+                    })
                     |> then_ @@ matchEachTrack bag csvStream;
             });
         })

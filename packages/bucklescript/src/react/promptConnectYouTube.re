@@ -3,14 +3,14 @@ open Js.Promise;
 module PromptConnectYouTube = {
     include ReactRe.Component.Stateful;
     let name = "PromptConnectYouTube";
-    type props = { onSignedIn : unit => unit };
+    type props = { onSignedIn : YouTubeHelper.t => unit };
     type state = { initialized: bool };
 
     let getInitialState _ => { initialized: false };
 
-    let signInStatusChanged { props } signedIn => {
+    let signInStatusChanged { props } ytHelper signedIn => {
         if(signedIn) {
-            props.onSignedIn ();
+            props.onSignedIn ytHelper;
         } else {
             ();
         }
@@ -20,13 +20,13 @@ module PromptConnectYouTube = {
         let { setState, props } = bag;
 
         YouTubeHelper.init ()
-            |> then_ (fun _ => {
+            |> then_ (fun ytHelper => {
                 setState (fun { state } => { ...state, initialized: true });
 
                 if(YouTubeHelper.isSignedIn ()) {
-                    props.onSignedIn ();
+                    props.onSignedIn ytHelper;
                 } else {
-                    YouTubeHelper.listenSignInChange @@ signInStatusChanged bag;
+                    YouTubeHelper.listenSignInChange @@ signInStatusChanged bag ytHelper;
                 };
 
                 resolve ();

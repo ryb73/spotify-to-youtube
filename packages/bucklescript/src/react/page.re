@@ -8,13 +8,13 @@ module Page = {
     type props = unit;
     type state = {
         selectedPlaylist : option (Js.t Spotify.playlist),
-        signedIntoYouTube: bool,
+        ytHelper: option YouTubeHelper.t,
         exportFinished: bool
     };
 
     let getInitialState _ => {
         selectedPlaylist: None,
-        signedIntoYouTube: false,
+        ytHelper: None,
         exportFinished: false
      };
 
@@ -43,8 +43,8 @@ module Page = {
         Some { ...state, selectedPlaylist: Some playlist };
     };
 
-    let onSignedIntoYouTube { state } _ => {
-        Some { ...state, signedIntoYouTube: true };
+    let onSignedIntoYouTube { state } ytHelper => {
+        Some { ...state, ytHelper: Some ytHelper };
     };
 
     let afterExport { state } _ => {
@@ -72,13 +72,17 @@ module Page = {
                 | Some access_token => validateSpotifyResponse bag access_token;
             };
 
-            | Some selectedPlaylist =>
-                (not state.signedIntoYouTube) ?
+            | Some selectedPlaylist => switch state.ytHelper {
+                | None =>
                     <PromptConnectYouTube onSignedIn=(updater onSignedIntoYouTube) />
-                : (not state.exportFinished) ?
-                    <AllowExportPlaylist spotify playlistId=selectedPlaylist##id onNextStep=(updater afterExport) />
-                :
-                    <ImportPlaylist playlistName=selectedPlaylist##name />
+
+                | Some ytHelper =>
+                    (not state.exportFinished) ?
+                        <AllowExportPlaylist spotify ytHelper playlistId=selectedPlaylist##id
+                            onNextStep=(updater afterExport) />
+                    :
+                        <ImportPlaylist playlistName=selectedPlaylist##name />
+            };
         };
     };
 };

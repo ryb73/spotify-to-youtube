@@ -15,7 +15,7 @@
     "reason" : { "react-jsx" : true },
     "sources" : {
         "dir" : "src",
-        "subdirs": [ "react", "remote" ]
+        "subdirs": [ "react", "cache" ]
     },
     "bsc-flags": [ "-w -10-23" ]
 }

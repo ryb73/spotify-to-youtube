@@ -9,7 +9,8 @@
     "no-be": "npm run clean && eval $(dependencyEnv) && nopam && bsb -make-world 2>&1",
     "watch": "npm run clean && eval $(dependencyEnv) && nopam && bsb -make-world -w 2>&1 | berror.native --path-to-refmttype $(which refmttype)",
     "clean": "bsb -clean-world && rm -rf html/js",
-    "webpack": "webpack -w"
+    "webpack": "webpack -w",
+    "postinstall": "electron-rebuild"
   },
   "repository": {
     "type": "git",
@@ -27,7 +28,7 @@
     "bs-webapi": "0.4.1",
     "copy-webpack-plugin": "4.0.1",
     "dependency-env": "*",
-    "flat-cache": "1.2.2",
+    "electron-rebuild": "1.5.11",
     "font-awesome": "4.7.0",
     "nopam": "*",
     "ocamlBetterErrors": "*",
@@ -42,6 +43,7 @@
   "dependencies": {
     "electron": "1.6.5",
     "http-server": "0.9.0",
+    "sqlite3": "3.1.8",
     "stream-to-array": "github:ryb73/stream-to-array"
   }
 }

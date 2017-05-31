@@ -12,7 +12,8 @@ module AllowExportPlaylist = {
     type props = {
         spotify: Js.t Spotify.t,
         playlistId: string,
-        onNextStep: unit => unit
+        onNextStep: unit => unit,
+        ytHelper: YouTubeHelper.t
     };
 
     type state = {
@@ -44,12 +45,14 @@ module AllowExportPlaylist = {
 
     /* Search for (and write) a match for each track in series */
     let rec matchEachTrack bag csvStream tracks => {
+        let { props } = bag;
+
         switch tracks {
             | [] => resolve ()
             | [ (track, index), ...remaining ] => {
                 updateStatusForTrack bag track index (List.length tracks);
 
-                VideoMatcher.matchTrack track
+                VideoMatcher.matchTrack props.ytHelper track
                     |> then_ @@ writeMatch csvStream
                     |> then_ (fun _ => matchEachTrack bag csvStream remaining)
             }
@@ -180,4 +183,5 @@ module AllowExportPlaylist = {
 
 include ReactRe.CreateComponent AllowExportPlaylist;
 
-let createElement ::spotify ::playlistId ::onNextStep => wrapProps { spotify, playlistId, onNextStep };
+let createElement ::spotify ::playlistId ::onNextStep ::ytHelper =>
+    wrapProps { spotify, playlistId, onNextStep, ytHelper };

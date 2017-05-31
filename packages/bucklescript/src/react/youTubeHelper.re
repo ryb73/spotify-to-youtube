@@ -3,9 +3,16 @@ open Google.YouTube;
 
 external setTimeout : (unit => unit) => int => unit = "" [@@bs.val];
 
+type t = { cache: YouTubeCache.cache };
+
 let clientId = "655237426898-8ge9gblffi9184ng84lqhm1il5p5ifaq.apps.googleusercontent.com";
 
-let init () => Google.Client.init clientId [| `YouTubeSSL |];
+let init () =>
+    Google.Client.init clientId [| `YouTubeSSL |]
+        |> then_ (fun _ => {
+            YouTubeCache.initialize ();
+        })
+        |> then_ (fun cache => resolve { cache: cache });
 
 let listenSignInChange listener => {
     let auth = Google.Auth2.getAuthInstance ();
@@ -22,7 +29,7 @@ let signIn () => {
     auth##signIn ();
 };
 
-let queryYoutube query => {
+let queryYoutube { cache } query => {
     let opts = [%bs.obj {
         part: "snippet",
         q: query,
@@ -31,7 +38,7 @@ let queryYoutube query => {
 
     Search.list opts
         |> then_ (fun data => {
-            RemoteYouTubeCache.set query data;
+            YouTubeCache.set cache query data;
             resolve data;
         });
 };
@@ -47,12 +54,14 @@ let promisify v => {
     });
 };
 
-let doSearch query => {
-    let cachedValue = RemoteYouTubeCache.get query;
-    switch cachedValue {
-        | None => queryYoutube query
-        | Some result => promisify result
-    };
+let doSearch ytHelper query => {
+    YouTubeCache.get ytHelper.cache query
+        |> then_ (fun cachedValue => {
+            switch cachedValue {
+                | None => queryYoutube ytHelper query
+                | Some result => promisify result
+            };
+        });
 };
 
 let getUserPlaylists () => {

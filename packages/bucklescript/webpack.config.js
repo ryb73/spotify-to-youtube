@@ -10,23 +10,12 @@ module.exports = {
     },
 
     output: {
-        path: path.join(__dirname, "html"),
+        path: path.resolve("./html"),
         filename: "js/[name].js",
     },
 
     module: {
         loaders: [{
-            // This is a hacky way to get remotes to work. This is the only way I could think
-            // of that didn't result in a bunch of duplicated code
-            test: /remote.+\.js$/,
-            loader: "string-replace-loader",
-            query: {
-                search: "(\\W)require(?=\\()",
-                replace: "$1require('electron').remote.require",
-                flags: "g",
-                strict: true
-            }
-        },{
             // https://github.com/bloomberg/bucklescript/issues/1653
             // This is a really bad solution but will work for now
             test: /\.js$/,
@@ -48,6 +37,9 @@ module.exports = {
         }, {
             from: "node_modules/font-awesome/fonts",
             to: "fonts"
+        }, {
+            from: "src/**/*.js",
+            to: path.resolve("./lib/js/[path][name].js")
         }])
     ],
 

@@ -165,10 +165,10 @@ let resolveBestMatch track videoSearchResults => {
     }
 };
 
-let matchTrack track => {
+let matchTrack ytHelper track => {
     let artistName = getTrackArtist track;
     let trackName = track##track##name;
-    YouTubeHelper.doSearch (artistName ^ " " ^ trackName)
+    YouTubeHelper.doSearch ytHelper (artistName ^ " " ^ trackName)
         |> then_ (fun data => {
             resolveBestMatch track data##result##items;
         });

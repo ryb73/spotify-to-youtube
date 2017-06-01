@@ -9,7 +9,6 @@
         "bs-google-apis-web",
         "bs-node",
         "bs-fast-csv",
-        "bs-flat-cache",
         "bs-stream-to-array"
     ],
     "reason" : { "react-jsx" : true },

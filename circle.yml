@@ -6,8 +6,8 @@ jobs:
       - image: circleci/node
     steps:
       - checkout
-      - restore-cache:
-        key: node_modules
+      # - restore-cache:
+      #   key: node_modules
       - run:
         name: test
         command: npm test

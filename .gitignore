@@ -60,3 +60,9 @@ node_modules
 .DS_Store
 
 youtube-cache
+
+lib/
+html/js/
+.vscode/
+*.csv
+.merlin

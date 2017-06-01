@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+
+      - restore-cache:
+        key: node_modules
+
+      - run:
+        name: test
+        command: npm test
+
+      - save-cache:
+        key: node_modules
+        paths:
+          - node_modules

@@ -10,7 +10,7 @@
     "watch": "npm run clean && eval $(dependencyEnv) && nopam && bsb -make-world -w 2>&1 | berror.native --path-to-refmttype $(which refmttype)",
     "clean": "bsb -clean-world && rm -rf html/js",
     "webpack": "webpack -w",
-    "postinstall": "electron-rebuild"
+    "postinstall": "./node_modules/.bin/electron-rebuild"
   },
   "repository": {
     "type": "git",

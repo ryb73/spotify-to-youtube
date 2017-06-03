@@ -5,6 +5,10 @@ jobs:
         docker:
             - image: circleci/node:7
         steps:
+            - run: printf "password\npassword" > vncpw
+            - run: vncpasswd < vncpw
+            - run: rm vncpw
+            - run: vnc4server -geometry 1280x1024 -depth 24
             - checkout
             - restore-cache:
                 key: node_modules

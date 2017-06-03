@@ -3,7 +3,7 @@ jobs:
     build:
         working_directory: ~/spotify-to-youtube
         docker:
-            - image: circleci/node
+            - image: circleci/node:7
         steps:
             - checkout
             - restore-cache:

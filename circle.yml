@@ -3,7 +3,7 @@ jobs:
     build:
         working_directory: ~/spotify-to-youtube
         docker:
-            - image: circleci/node:7
+            # - image: circleci/node:7
             - image: consol/ubuntu-xfce-vnc
         steps:
             - checkout

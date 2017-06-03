@@ -5,7 +5,6 @@ jobs:
         docker:
             - image: circleci/node:7
             - image: consol/ubuntu-xfce-vnc
-                command: vncserver
         steps:
             - checkout
             - restore-cache:

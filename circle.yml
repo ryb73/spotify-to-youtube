@@ -9,7 +9,7 @@ jobs:
             - restore-cache:
                 key: node_modules
             - run: npm install
-            - run: ./node_modules/.bin/electron-rebuild
+            - run: DEBUG=electron-rebuild ./node_modules/.bin/electron-rebuild
             - run: npm test
             - save-cache:
                 key: node_modules

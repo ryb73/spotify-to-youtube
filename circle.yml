@@ -15,3 +15,11 @@ jobs:
                 key: node_modules
                 paths:
                     - node_modules
+            #sudo apt-get update
+            #sudo apt-get install xfce4 xfce4-goodies tightvncserver
+            #USER=circleci vncserver
+            #sudo apt-get install libxss1 lsof
+            #sudo apt-get install gconf2
+            #sudo apt-get install libnss3
+            #cd spotify-to-youtube/
+            #DISPLAY=:1.0 electron lib/js/src/main.js

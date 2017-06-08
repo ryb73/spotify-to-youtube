@@ -1,7 +1,7 @@
 # spotify-to-youtube
 Converts Spotify playlists into YouTube playlists.
 
-(demo)[media/demo.gif]
+![demo](media/demo.gif)
 
 To build:
 ```

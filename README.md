@@ -1,2 +1,10 @@
 # spotify-to-youtube
-Convert Spotify playlists to YouTube
+Converts Spotify playlists into YouTube playlists.
+
+To build:
+```
+$ npm install
+$ npm run build
+$ npm run webpack
+$ electron lib/js/src/main.js
+```

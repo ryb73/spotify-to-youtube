@@ -26,13 +26,13 @@
     "bs-google-apis-web": "1.0.0",
     "bs-node": "github:ryb73/bs-node",
     "bs-node-http-server": "1.0.0",
-    "bs-platform": "*",
+    "bs-platform": "1.7.4",
     "bs-qs": "2.0.0",
     "bs-spotify-web-api": "1.2.0",
     "bs-stream-to-array": "1.0.0",
     "bs-webapi": "0.4.1",
     "copy-webpack-plugin": "4.0.1",
-    "dependency-env": "*",
+    "dependency-env": "0.1.1",
     "electron-rebuild": "1.5.11",
     "fast-csv": "2.4.0",
     "font-awesome": "4.7.0",
@@ -40,15 +40,15 @@
     "ocamlBetterErrors": "*",
     "react": "15.5.4",
     "react-dom": "15.5.4",
-    "reason-react": "0.1.1",
-    "spotify-web-api-node": "2.3.6",
+    "reason-react": "0.1.3",
+    "spotify-web-api-node": "2.4.0",
     "string-replace-loader": "1.2.0",
-    "webpack": "2.4.1"
+    "webpack": "2.6.1"
   },
   "myreason": "*",
   "dependencies": {
-    "electron": "1.6.5",
-    "http-server": "0.9.0",
+    "electron": "1.7.2",
+    "http-server": "0.10.0",
     "sqlite3": "3.1.8",
     "stream-to-array": "github:ryb73/stream-to-array"
   }

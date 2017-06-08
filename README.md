@@ -1,6 +1,8 @@
 # spotify-to-youtube
 Converts Spotify playlists into YouTube playlists.
 
+(demo)[media/demo.gif]
+
 To build:
 ```
 $ npm install

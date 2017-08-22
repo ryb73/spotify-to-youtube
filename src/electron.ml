@@ -38,6 +38,7 @@ end
 module WebContents = struct
   class type t = object
     method openDevTools : unit -> unit
+    method executeJavaScript : string -> unit
   end [@bs]
 end
 

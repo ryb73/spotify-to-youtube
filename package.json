@@ -1,16 +1,18 @@
 {
-  "name": "spotify-to-youtube-bucklescript",
+  "name": "spotify-to-youtube",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Converts Spotify playlists to YouTube playlists",
+  "main": "lib/js/src/main.js",
   "scripts": {
     "test": "npm run build && (webpack || webpack)",
     "build": "npm run clean && eval $(dependencyEnv) && nopam && bsb -make-world 2>&1 | berror.native --path-to-refmttype $(which refmttype)",
     "no-be": "npm run clean && eval $(dependencyEnv) && nopam && bsb -make-world 2>&1",
     "watch": "npm run clean && eval $(dependencyEnv) && nopam && bsb -make-world -w 2>&1 | berror.native --path-to-refmttype $(which refmttype)",
-    "clean": "bsb -clean-world && rm -rf html/js",
+    "clean": "bsb -clean-world && rm -rf html/js && rm -rf dist",
     "webpack": "webpack -w",
-    "postinstall": "electron-rebuild"
+    "postinstall": "electron-rebuild",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "repository": {
     "type": "git",
@@ -27,13 +29,14 @@
     "bs-google-apis-web": "1.0.0",
     "bs-node": "github:ryb73/bs-node",
     "bs-node-http-server": "1.0.0",
-    "bs-platform": "1.7.4",
     "bs-qs": "2.0.0",
     "bs-spotify-web-api": "1.2.0",
     "bs-stream-to-array": "1.0.0",
     "bs-webapi": "0.4.1",
     "copy-webpack-plugin": "4.0.1",
     "dependency-env": "0.1.1",
+    "electron": "1.7.2",
+    "electron-builder": "19.24.1",
     "electron-rebuild": "1.5.11",
     "fast-csv": "2.4.0",
     "font-awesome": "4.7.0",
@@ -48,9 +51,25 @@
   },
   "myreason": "*",
   "dependencies": {
-    "electron": "1.7.2",
+    "bs-platform": "1.7.4",
+    "electron-debug": "1.4.0",
+    "express": "4.15.4",
     "http-server": "0.10.0",
     "sqlite3": "3.1.8",
     "stream-to-array": "github:ryb73/stream-to-array"
+  },
+  "build": {
+    "appId": "com.electron.spotifyToYoutube",
+    "productName": "Spotify to YouTube",
+    "directories": {
+      "buildResources": "lib/js/src"
+    },
+    "files": [
+      "lib/js/src/**/*",
+      "html/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.utilities"
+    }
   }
 }

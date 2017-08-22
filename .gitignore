@@ -66,3 +66,4 @@ html/js/
 .vscode/
 *.csv
 .merlin
+dist/

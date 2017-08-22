@@ -1,5 +1,9 @@
 open Electron;
 
+external dirname : string = "__dirname" [@@bs.val];
+
+[%bs.raw "require('electron-debug')({showDevTools: true})"];
+
 let winRef : ref (option (Js.t BrowserWindow.t)) = ref None;
 
 let createWindow () => {
@@ -25,7 +29,7 @@ Electron.app##on "activate" (fun () => {
 });
 
 let server = HttpServer.createServer [%bs.obj {
-    root: "html/",
+    root: Node.Path.join [| dirname, "/../../../html/" |],
     cache: Js.Undefined.return ~-1 /* No caching */
 }];
 server##listen 54380;

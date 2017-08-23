@@ -13,7 +13,8 @@ let createWindow () => {
     win##loadURL "http://localhost:54380/";
 
     win##on "closed" (fun () => {
-        winRef := None
+        winRef := None;
+        Electron.app##quit ();
     });
 
     ();

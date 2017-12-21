@@ -14,20 +14,6 @@ module.exports = {
         filename: "js/[name].js",
     },
 
-    module: {
-        loaders: [{
-            // https://github.com/bloomberg/bucklescript/issues/1653
-            // This is a really bad solution but will work for now
-            test: /\.js$/,
-            loader: "string-replace-loader",
-            query: {
-                search: "(\\W)Promise\\.all\\(([\\w\\s,]+)\\)",
-                replace: "$1Promise.all([$2])",
-                flags: "g"
-            }
-        }]
-    },
-
     plugins: [
         new webpack.DefinePlugin({ "global.GENTLY": false }),
 
@@ -40,7 +26,9 @@ module.exports = {
         }, {
             from: "src/**/*.js",
             to: path.resolve("./lib/js/[path][name].js")
-        }])
+        }]),
+
+        new webpack.NormalModuleReplacementPlugin(/^any-promise$/, path.resolve("./node_modules/promise-monofill")),
     ],
 
     devtool: "source-map",

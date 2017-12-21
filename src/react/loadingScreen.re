@@ -1,15 +1,7 @@
-module LoadingScreen = {
-    include ReactRe.Component;
-    let name = "LoadingScreen";
-    type props = { message: string };
+let component = ReasonReact.statelessComponent("LoadingScreen");
 
-    let render { props } =>
-        <div>
-            <i className="fa fa-refresh fa-spin" />
-            (ReactRe.stringToElement props.message)
-        </div>;
+let make = (~message, _) => {
+  ...component,
+  render: (_) =>
+    <div> <i className="fa fa-refresh fa-spin" /> (ReasonReact.stringToElement(message)) </div>
 };
-
-include ReactRe.CreateComponent LoadingScreen;
-
-let createElement ::message => wrapProps { message: message };

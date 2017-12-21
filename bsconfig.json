@@ -11,10 +11,11 @@
         "bs-fast-csv",
         "bs-stream-to-array"
     ],
-    "reason" : { "react-jsx" : true },
     "sources" : {
         "dir" : "src",
         "subdirs": [ "react", "cache" ]
     },
-    "bsc-flags": [ "-w -10-23-40+6+7+27+32..39+44+45" ] /* default: -40+6+7+27+32..39+44+45 */
+    "reason" : { "react-jsx" : 2 },
+    "refmt": 3,
+    "bsc-flags": [ "-w -10", "-bs-super-errors" ]
 }

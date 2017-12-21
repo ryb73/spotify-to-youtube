@@ -1,1 +1,1 @@
-ReactDOMRe.renderToElementWithId <Page /> "container";
+ReactDOMRe.renderToElementWithId(<Page />, "container");

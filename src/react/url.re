@@ -1,12 +1,9 @@
 /* Deduping this later when not lazy */
 
-type urlObject = [%bs.obj:
-  {
-    .
-    pathname: string,
-    protocol: string,
-    slashes: Js.boolean
-  }
-] [@bs];
+type urlObject;
 
-external formatUrl : urlObject => string = "format" [@@bs.module "url"];
+[@bs.obj]
+external makeUrl : (~pathname: string, ~protocol: string, ~slashes: Js.boolean, unit) => urlObject =
+  "";
+
+[@bs.module "url"] external formatUrl : urlObject => string = "format";

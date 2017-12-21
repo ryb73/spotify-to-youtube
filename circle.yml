@@ -8,7 +8,7 @@ jobs:
             - checkout
             - restore-cache:
                 key: node_modules
-            - run: sudo npm i -g bs-platform
+            - run: npm i bs-platform
             - run: npm install
             - run: npm test
             - save-cache:

@@ -30,7 +30,7 @@
     "bs-node": "github:ryb73/bs-node",
     "bs-node-http-server": "1.0.0",
     "bs-qs": "2.0.0",
-    "bs-spotify-web-api": "1.2.0",
+    "bs-spotify-web-api": "2.0.0",
     "bs-stream-to-array": "2.0.0",
     "bs-webapi": "0.7.0",
     "copy-webpack-plugin": "4.3.0",

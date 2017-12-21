@@ -19,6 +19,7 @@ install:
   - cd ..
   - .\jsontmp\node_modules\.bin\json -I -f package.json -e "delete this.devDependencies.nopam; delete this.devDependencies.ocamlBetterErrors"
   - rm package-lock.json
+  - npm i -g bs-platform
   - npm install
 
 build_script:

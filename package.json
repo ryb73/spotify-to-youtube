@@ -39,7 +39,7 @@
     "electron-rebuild": "1.6.0",
     "fast-csv": "2.4.1",
     "font-awesome": "4.7.0",
-    "ppl": "0.1.8",
+    "persistent-package-linker": "0.10.0",
     "promise-monofill": "1.0.1",
     "qs": "2.0.0",
     "react": "16.2.0",

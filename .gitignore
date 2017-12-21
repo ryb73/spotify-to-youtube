@@ -67,3 +67,5 @@ html/js/
 *.csv
 .merlin
 dist/
+
+package-links.json

@@ -7,6 +7,8 @@ open Electron;
 let winRef: ref(option(Js.t(BrowserWindow.t))) = ref(None);
 
 let createWindow = () => {
+  ElectronUpdater.checkForUpdatesAndNotify ();
+
   let win = Electron.BrowserWindow.mk();
   winRef := Some(win);
   win##loadURL("http://localhost:54380/");

@@ -12,7 +12,6 @@ let createWindow = () => {
   let win = Electron.BrowserWindow.mk();
   winRef := Some(win);
   win##loadURL("http://localhost:54380/");
-  win##webContents##openDevTools ();
   win##on(
     "closed",
     () => {

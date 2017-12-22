@@ -24,7 +24,6 @@ let artistColumn = 0;
 let songColumn = 1;
 let videoUrlColumn = 4;
 let validateCsv = (csv) => {
-  [%bs.debugger];
   let csvList = Array.to_list(csv);
   switch csvList {
   | [headers, ...data] => headers[videoUrlColumn] === "Video URL" ? Some(data) : None

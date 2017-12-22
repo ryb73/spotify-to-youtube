@@ -7,8 +7,8 @@ environment:
   GH_TOKEN:
     secure: mCHkUQ+tL4GmNF0UTbEtl5KsM+ZNX/qm5Fy3aAzkQScrkqhcf7w9Toz0bCT/EyWD
 
-init:
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+# init:
+#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
   - ps: Install-Product node $env:nodejs_version
@@ -25,5 +25,5 @@ build_script:
   - npm run windows-build-all
   - npm run dist
 
-on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+# on_finish:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

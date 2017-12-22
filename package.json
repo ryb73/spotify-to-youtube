@@ -72,6 +72,9 @@
     ],
     "mac": {
       "category": "public.app-category.utilities"
+    },
+    "win": {
+      "publish": "github"
     }
   }
 }

@@ -37,6 +37,7 @@
     "electron": "1.7.10",
     "electron-builder": "19.49.0",
     "electron-rebuild": "1.6.0",
+    "electron-updater": "2.17.6",
     "fast-csv": "2.4.1",
     "font-awesome": "4.7.0",
     "persistent-package-linker": "github:ryb73/persistent-package-linker",

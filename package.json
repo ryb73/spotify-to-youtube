@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/ryb73/spotify-to-youtube#readme",
   "devDependencies": {
-    "bs-electron-updater": "1.0.2",
+    "bs-electron-updater": "1.0.3",
     "bs-fast-csv": "2.0.0",
     "bs-google-apis-web": "1.0.0",
     "bs-node": "github:ryb73/bs-node",
@@ -76,7 +76,8 @@
       "category": "public.app-category.utilities"
     },
     "win": {
-      "publish": "github"
+      "publish": "github",
+      "target": "portable"
     }
   }
 }

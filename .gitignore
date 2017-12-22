@@ -69,3 +69,5 @@ html/js/
 dist/
 
 package-links.json
+
+.bsb.lock

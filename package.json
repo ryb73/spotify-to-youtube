@@ -54,7 +54,8 @@
     "electron-debug": "1.4.0",
     "express": "4.16.2",
     "http-server": "0.10.0",
-    "sqlite3": "3.1.13"
+    "sqlite3": "3.1.13",
+    "stream-to-array": "2.3.0"
   },
   "peerDependencies": {
     "bs-platform": "^2.0.0"

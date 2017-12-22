@@ -1,6 +1,6 @@
 {
   "name": "spotify-to-youtube",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Converts Spotify playlists to YouTube playlists",
   "main": "lib/js/src/main.js",
   "scripts": {
@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/ryb73/spotify-to-youtube#readme",
   "devDependencies": {
-    "bs-electron-updater": "github:ryb73/bs-electron-updater",
+    "bs-electron-updater": "1.0.0",
     "bs-fast-csv": "2.0.0",
     "bs-google-apis-web": "1.0.0",
     "bs-node": "github:ryb73/bs-node",

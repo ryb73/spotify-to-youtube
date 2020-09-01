@@ -34,7 +34,7 @@
     "bs-stream-to-array": "2.0.0",
     "bs-webapi": "0.13.6",
     "copy-webpack-plugin": "5.0.2",
-    "electron": "4.1.1",
+    "electron": "10.1.1",
     "electron-builder": "20.39.0",
     "electron-rebuild": "1.8.4",
     "electron-updater": "4.0.6",
